@@ -4,11 +4,8 @@ A creator tipping platform built on Solana, powered by MPC (Multi-Party Computat
 
 ## Demo
 
-[![Watch the TipJar demo](./docs/demo-preview.svg)](./demo.mp4)
+<video src="demo.mp4" width="80%" controls></video>
 
-> GitHub does not play repository `mp4` files inline inside a README, so this preview opens the demo video when clicked.
-
----
 
 ## Project Structure
 
