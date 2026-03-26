@@ -1,0 +1,18 @@
+{
+  "name": "common",
+  "module": "index.ts",
+  "type": "module",
+  "exports": {
+    "./inputs": "./inputs.ts",
+    "./solana": "./solana.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "zod": "^4.0.15"
+  }
+}

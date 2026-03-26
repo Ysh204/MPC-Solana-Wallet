@@ -1,0 +1,182 @@
+"use client";
+
+import { useState } from "react";
+import { useParams } from "next/navigation";
+import RequireAuth from "../../../../components/RequireAuth";
+import { useCreator } from "../../../../hooks/creators";
+import { tipCreator } from "../../../../lib/api";
+
+function shortSig(sig: string) {
+  return sig.slice(0, 12) + "…" + sig.slice(-4);
+}
+
+function fmtTime(iso: string) {
+  return new Date(iso).toLocaleString(undefined, {
+    month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+  });
+}
+
+function StatusNotification({ kind, message }: { kind: 'success' | 'error' | 'loading' | '', message: string }) {
+  if (!message) return null;
+  return (
+    <div className={`status-bar status-${kind}`}>
+      <div className="flex flex-col">
+        <span className="font-bold uppercase tracking-wider text-[10px] opacity-70">
+          {kind === 'loading' ? 'Processing' : kind}
+        </span>
+        <span>{message}</span>
+      </div>
+    </div>
+  );
+}
+
+export default function CreatorProfilePage() {
+  const { id } = useParams<{ id: string }>();
+  const { creator, loading, error, refresh } = useCreator(id);
+  const [amount, setAmount] = useState("");
+  const [message, setMessage] = useState("");
+  const [sending, setSending] = useState(false);
+  const [status, setStatus] = useState({ kind: '' as any, msg: '' });
+
+  async function handleTip(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus({ kind: 'loading', msg: 'Signing and broadcasting tip...' });
+    setSending(true);
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    try {
+      await tipCreator(token, { toCreatorId: id, amount: parseFloat(amount), message: message || undefined });
+      setStatus({ kind: 'success', msg: 'Tip sent successfully! 🎉' });
+      setAmount(""); setMessage("");
+      refresh();
+    } catch (err: any) {
+      setStatus({ kind: 'error', msg: err?.message || "Tip failed" });
+    } finally {
+      setSending(false);
+      setTimeout(() => setStatus({ kind: '', msg: '' }), 6000);
+    }
+  }
+
+  if (loading) return (
+     <RequireAuth>
+        <div className="flex flex-col items-center py-24 gap-4">
+           <div className="w-12 h-12 border-2 border-[#00f0ff] border-t-transparent rounded-full animate-spin" />
+           <span className="text-xs uppercase tracking-[0.2em] font-bold text-[#00f0ff]">Loading Profile...</span>
+        </div>
+     </RequireAuth>
+  );
+
+  if (error || !creator) return (
+    <RequireAuth>
+      <div className="card text-center py-20 flex flex-col items-center gap-4">
+         <span className="text-4xl opacity-50">😕</span>
+         <h3 className="text-xl font-bold">Profile Not Found</h3>
+         <p className="text-[#a0a0b0]">{error || "This creator details could not be retrieved."}</p>
+      </div>
+    </RequireAuth>
+  );
+
+  const initials = (creator.displayName || "?").slice(0, 2).toUpperCase();
+
+  return (
+    <RequireAuth>
+      <div className="max-w-5xl mx-auto" id="creator-profile">
+        {/* Profile Header */}
+        <header className="flex flex-col md:flex-row items-center gap-8 mb-12">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#00f0ff] to-[#7000ff] p-1 shadow-[0_0_30px_rgba(0,240,255,0.2)]">
+               <div className="w-full h-full rounded-full bg-[#0a0a0f] flex items-center justify-center overflow-hidden border border-white/10">
+                  {creator.avatarUrl ? (
+                    <img src={creator.avatarUrl} alt={creator.displayName || ""} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-2xl font-black text-white">{initials}</span>
+                  )}
+               </div>
+            </div>
+            <div className="text-center md:text-left flex-1">
+               <h1 className="text-4xl font-black landing-gradient mb-2">{creator.displayName}</h1>
+               <p className="text-[#a0a0b0] max-w-xl line-clamp-2">{creator.bio || "No bio description provided."}</p>
+               <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-4">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-[#00f0ff]">Total Received</span>
+                    <span className="text-lg font-bold text-white">◎ {creator.totalTips.toFixed(4)} SOL</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-[#a0a0b0]">Support Count</span>
+                    <span className="text-lg font-bold text-white">{creator.tipCount} Tips</span>
+                  </div>
+               </div>
+            </div>
+        </header>
+
+        <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-8">
+          {/* Tip Form */}
+          <div className="card h-fit sticky top-6">
+            <div className="flex items-center gap-3 mb-6">
+               <span className="text-xl">🙌</span>
+               <h2 className="text-lg font-bold uppercase tracking-widest">Support</h2>
+            </div>
+            <form onSubmit={handleTip} className="flex flex-col gap-4">
+              <div>
+                <label className="text-[10px] uppercase tracking-widest text-[#a0a0b0] font-bold block mb-2">Amount (SOL)</label>
+                <input className="input" type="number" step="any" min="0" placeholder="0.05" value={amount} onChange={e => setAmount(e.target.value)} required />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase tracking-widest text-[#a0a0b0] font-bold block mb-2">Message (Optional)</label>
+                <textarea className="input min-h-[100px] resize-none" placeholder="Leave a nice comment..." value={message} onChange={e => setMessage(e.target.value)} maxLength={280} />
+              </div>
+              <button disabled={sending} className="btn btn-primary w-full mt-2" type="submit">
+                {sending ? "Processing..." : `Send Tip to ${(creator.displayName || "Creator").split(' ')[0]}`}
+              </button>
+            </form>
+          </div>
+
+          {/* Activity Feed */}
+          <div className="card">
+             <div className="flex items-center gap-3 mb-6">
+                <span className="text-xl">🗞️</span>
+                <h2 className="text-lg font-bold uppercase tracking-widest">Activity Feed</h2>
+             </div>
+             {creator.tipsReceived.length === 0 ? (
+               <div className="text-center py-20 opacity-30">
+                  <p className="text-sm">Be the first to support this creator!</p>
+               </div>
+             ) : (
+               <div className="flex flex-col gap-3">
+                 {creator.tipsReceived.map((tip) => (
+                   <div key={tip.id} className="tip-row flex-col items-stretch gap-3">
+                     <div className="flex justify-between items-start">
+                        <div className="flex items-center gap-2">
+                           <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10 text-xs font-bold">
+                              {(tip.fromUser.displayName || 'A').slice(0, 1).toUpperCase()}
+                           </div>
+                           <div className="flex flex-col">
+                              <span className="text-sm font-bold text-white">{tip.fromUser.displayName || "Anonymous contributor"}</span>
+                              <span className="text-[10px] text-[#a0a0b0]">{fmtTime(tip.createdAt)}</span>
+                           </div>
+                        </div>
+                        <div className="flex flex-col items-end">
+                           <span className="text-sm font-black text-[#00ff9d]">◎ {tip.amount.toFixed(4)}</span>
+                           {tip.signature && (
+                             <a href={`https://explorer.solana.com/tx/${tip.signature}?cluster=devnet`} target="_blank" rel="noreferrer" className="text-[10px] text-[#00f0ff] opacity-50 hover:opacity-100 transition-opacity">
+                               VIEW TX ↗
+                             </a>
+                           )}
+                        </div>
+                     </div>
+                     {tip.message && (
+                       <div className="bg-black/20 p-3 rounded-lg border border-white/5">
+                          <p className="text-xs text-[#d1d5db] italic line-clamp-3">"{tip.message}"</p>
+                       </div>
+                     )}
+                   </div>
+                 ))}
+               </div>
+             )}
+          </div>
+        </div>
+
+        <StatusNotification kind={status.kind} message={status.msg} />
+      </div>
+    </RequireAuth>
+  );
+}

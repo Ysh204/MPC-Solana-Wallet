@@ -1,159 +1,153 @@
-# Turborepo starter
+# TipJar — Creator Tipping Platform
 
-This Turborepo starter is maintained by the Turborepo core team.
+A creator tipping platform built on Solana, powered by MPC (Multi-Party Computation) wallets. Creators get secure wallets, fans tip in SOL, and revenue splits automatically distribute to collaborators — all with on-chain transparency.
 
-## Using this example
+[watch the demo](./demo.mp4)
 
-Run the following command:
+---
 
-```sh
-npx create-turbo@latest
+## Project Structure
+
+### Apps
+- **`apps/backend`** (Port `3000`): Express API for auth, creator management, tipping, and MPC orchestration.
+- **`apps/mpc-backend`** (Port `3002`): MPC Node that holds key shares and participates in threshold signing.
+- **`apps/fe`** (Port `4000`): Next.js frontend for creators and fans — discover, tip, track history.
+
+### Packages
+- **`packages/solana-mpc-tss-lib`**: TSS cryptographic library for Solana MPC key generation and signing.
+- **`packages/db`**: Prisma schema for the main PostgreSQL DB — users, tips, revenue splits.
+- **`packages/mpc-db`**: Prisma schema for MPC nodes — key shares.
+- **`packages/common`**: Shared Zod validation schemas and Solana network config.
+
+---
+
+## MPC Key Architecture
+
+**No single complete private key ever exists.** Keys are split into shares across MPC nodes using threshold signatures.
+
+| Database | Table | What's Stored |
+|---|---|---|
+| `school_cms` (`packages/db`) | `User.publicKey` | Aggregated public key (wallet address) |
+| `mpc_db` (`packages/mpc-db`) | `KeyShare.secretKey` | One key share per node per user |
+
+### Key Generation Flow
+```
+Admin calls POST /admin/create-user
+        │
+        ├──► MPC Node 1 → generates key share → stores in its mpc_db
+        ├──► MPC Node 2 → generates key share → stores in its mpc_db
+        └──► MPC Node N → generates key share → stores in its mpc_db
+        │
+        ▼
+Backend aggregates public keys → stores combined publicKey on User model
 ```
 
-## What's inside?
+### Transaction Signing (Tipping)
+1. Each MPC node creates a partial nonce commitment
+2. Each node creates a partial signature using its key share
+3. Backend aggregates partial signatures → broadcasts to Solana
 
-This Turborepo includes the following packages/apps:
+> **Security**: No single node can sign alone. Deploy 3+ nodes in production.
 
-### Apps and Packages
+---
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## Getting Started
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+### 1. Database Setup (Docker)
+```bash
+docker run -d --name postgres-db --restart unless-stopped -e POSTGRES_PASSWORD=password -p 5432:5432 -v pgdata:/var/lib/postgresql postgres
 
-### Utilities
+#Do this to stop the db and restart
+# stops db
+docker stop postgres-db 
 
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+# removes db
+docker rm postgres-db
+# remove volume
+docker volume rm pgdata
+# then to restarts db
+docker run -d --name postgres-db --restart unless-stopped -e POSTGRES_PASSWORD=password -p 5432:5432 -v pgdata:/var/lib/postgresql postgres
 ```
 
-Without global `turbo`, use your package manager:
+> ⚠️ The `-v pgdata:/var/lib/postgresql` flag persists data across container restarts. Without it, data is lost when the container is removed. PostgreSQL 18+ requires the mount at `/var/lib/postgresql` (not `/data`).
 
-```sh
-cd my-turborepo
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+Create the databases:
+```bash
+docker exec -it postgres-db psql -U postgres -c "CREATE DATABASE school_cms;"
+docker exec -it postgres-db psql -U postgres -c "CREATE DATABASE mpc_db;"
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+### 2. Configure Environment Variables
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo build --filter=docs
+**`apps/backend/.env`**:
+```env
+PORT=3000
+JWT_SECRET="super_secret_user_jwt"
+ADMIN_JWT_SECRET="super_secret_admin_jwt"
 ```
 
-Without global `turbo`:
-
-```sh
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+**`packages/db/.env`**:
+```env
+DATABASE_URL="postgresql://postgres:password@localhost:5432/school_cms?schema=public"
 ```
 
-### Develop
-
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
+**`packages/mpc-db/.env`**:
+```env
+DATABASE_URL="postgresql://postgres:password@localhost:5432/mpc_db?schema=public"
 ```
 
-Without global `turbo`, use your package manager:
+### 3. Generate Prisma Schemas
+```bash
+bun install
 
-```sh
-cd my-turborepo
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+cd packages/db
+bunx prisma generate
+bunx prisma db push
+
+cd ../mpc-db
+bunx prisma generate
+bunx prisma db push
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
+### 4. Start the Application
+```bash
+cd ../../
+bun turbo run dev
 ```
 
-Without global `turbo`:
+---
 
-```sh
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+## How to Use
+
+### Step 1: Create the First Admin
+Open Prisma Studio: `bunx prisma studio` inside `packages/db`. Create a user with role `ADMIN`.
+
+### Step 2: Sign In as Admin
+```
+POST http://localhost:3000/admin/signin
+{ "email": "admin@example.com", "password": "your_password" }
 ```
 
-### Remote Caching
+### Step 3: Create a Creator
+```
+POST http://localhost:3000/admin/create-user
+Headers: Authorization: Bearer <admin_token>
+{ "email": "creator@example.com", "password": "pass", "phone": "1234567890", "role": "CREATOR", "displayName": "Artist Name" }
+```
+This creates the user + generates their MPC wallet + airdrops devnet SOL.
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
+### Step 4: Create a Fan
+```
+POST http://localhost:3000/admin/create-user
+Headers: Authorization: Bearer <admin_token>
+{ "email": "fan@example.com", "password": "pass", "phone": "9876543210", "role": "FAN" }
 ```
 
-Without global `turbo`, use your package manager:
+### Step 5: Use the Platform
+1. Sign in at `http://localhost:4000/signin`
+2. **Discover** — Browse creator cards on the feed
+3. **Tip** — Click a creator → enter amount + message → send SOL via MPC
+4. **My Tips** — View sent/received tip history with tx links
+5. **Wallet** — Check balance, send SOL, view on-chain transactions
 
-```sh
-cd my-turborepo
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+> **Troubleshooting "Wallet Not Found"**: The user must be created via the admin API (not Prisma Studio) for the MPC wallet to be generated.
