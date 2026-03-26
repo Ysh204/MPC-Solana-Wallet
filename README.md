@@ -2,7 +2,7 @@
 
 A creator tipping platform built on Solana, powered by MPC (Multi-Party Computation) wallets. Creators get secure wallets, fans tip in SOL, and revenue splits automatically distribute to collaborators — all with on-chain transparency.
 
-[watch the demo](./demo.mp4)
+<video src="demo.mp4" width="80%" controls></video>
 
 ---
 
