@@ -36,10 +36,7 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
-<<<<<<< HEAD
+
 
 docs/
 
-=======
-docs/
->>>>>>> 9955d97 (Updated Readme)
