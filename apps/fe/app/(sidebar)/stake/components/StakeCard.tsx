@@ -1,63 +1,44 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpRight, Coins } from "lucide-react";
 import { useWallet } from "@solana/wallet-adapter-react";
-
 import { useStaking } from "../../../../hooks/staking/useStaking";
 
 export function StakeCard() {
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState('');
   const { stake, loading, userStake } = useStaking();
   const { connected } = useWallet();
-
-  const stakedBalance = userStake ? (userStake.stakedAmount.toNumber() / 1e9).toFixed(2) : "0.00";
 
   const handleStake = async () => {
     if (!amount || isNaN(Number(amount))) return;
     await stake(Number(amount));
-    setAmount("");
+    setAmount('');
   };
 
+  const stakedBalance = userStake ? (userStake.stakedAmount.toNumber() / 1e9).toFixed(2) : "0.00";
+
   return (
-    <div className="flex h-full flex-col justify-between rounded-[1.8rem] border border-white/[0.03] bg-[linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.003)),rgba(16,16,26,0.18)] p-8 backdrop-blur-[26px] shadow-[inset_0_1px_0_rgba(255,255,255,0.012)]">
-      <div>
-        <div className="mb-6 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[#49f0dd]/14 bg-[#49f0dd]/10 text-[#49f0dd]">
-              <Coins size={18} />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#71868d]">
-                Stake module
-              </p>
-              <h2 className="text-xl font-extrabold text-white">Stake SOL</h2>
-            </div>
-          </div>
-          <ArrowUpRight size={16} className="text-[#49f0dd]" />
-        </div>
+    <div className="dashboard-panel flex flex-col relative text-left h-full justify-between">
+      <div className="mb-6">
+        <h2 className="text-xl font-bold text-white mb-2">Stake SOL</h2>
+        <p className="text-white/60 text-sm">
+          Your Active Stake: <span className="text-white font-mono">{stakedBalance} SOL</span>
+        </p>
+      </div>
 
-        <div className="rounded-[1.35rem] bg-white/[0.025] p-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.025)]">
-          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#71868d]">
-            Active stake
-          </p>
-          <p className="mt-3 text-3xl font-extrabold tracking-tight text-white">
-            {stakedBalance} <span className="text-sm text-[#7f959d]">SOL</span>
-          </p>
-        </div>
-
-        <div className="mt-5">
-          <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.24em] text-[#71868d]">
-            Amount to stake
-          </label>
-          <div className="rounded-[1.25rem] border border-white/8 bg-[#071116]/55 p-1 backdrop-blur-xl">
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="0.00"
-              className="dashboard-input border-0 bg-transparent text-3xl"
-            />
+      <div className="relative mb-8 flex-grow">
+        {/* Tightly wrap the input and label together */}
+        <div className="relative w-full">
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="0.00"
+            className="w-full h-24 bg-[#0a0c14] border border-white/[0.03] rounded-2xl py-4 pl-6 pr-16 text-3xl text-white/80 font-mono outline-none focus:border-[#2d8e9d]/40 transition-all placeholder:text-white/40"
+          />
+          {/* inset-y-0 and flex items-center guarantees perfect vertical centering */}
+          <div className="absolute inset-y-0 right-6 flex items-center pointer-events-none z-20">
+            <span className="text-white/50 font-bold text-sm">SOL</span>
           </div>
         </div>
       </div>
@@ -65,9 +46,9 @@ export function StakeCard() {
       <button
         onClick={handleStake}
         disabled={!connected || loading || !amount}
-        className="btn btn-primary mt-8 w-full"
+        className="w-full py-4 rounded-xl bg-gradient-to-r from-[#6b47a1] to-[#2d8e9d] text-white/90 font-bold tracking-widest uppercase hover:opacity-90 transition-opacity duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {loading ? "Processing..." : "Stake now"}
+        {loading ? 'Processing...' : 'Stake Now'}
       </button>
     </div>
   );

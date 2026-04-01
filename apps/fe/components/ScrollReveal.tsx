@@ -15,7 +15,7 @@ export default function ScrollReveal({ children, className = "" }: { children: R
         }
       },
       {
-        threshold: 0.1,
+        threshold: 0.12,
         rootMargin: "0px 0px -50px 0px",
       }
     );

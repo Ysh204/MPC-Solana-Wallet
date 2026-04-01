@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LockKeyhole } from "lucide-react";
+import { AlertCircle, AtSign, Lock, LockKeyhole, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 
 import { signin } from "../../lib/api";
@@ -33,50 +33,84 @@ export default function SignInPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden p-6">
-      <section className="dashboard-panel mx-auto w-full max-w-xl">
+      {/* Darken the animated wave background on this page */}
+      <div className="fixed inset-0 z-0 bg-[#050507]/80" />
+      <div
+        className="fixed inset-0 z-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse at 50% 30%, rgba(139,92,246,0.08) 0%, transparent 60%)',
+        }}
+      />
+      <section className="dashboard-panel relative z-10 mx-auto w-full max-w-xl">
         <div className="mb-8 text-center">
-          <Link
-            href="/"
-            className="inline-flex h-16 w-16 items-center justify-center rounded-[1.4rem] bg-[#0d1017] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]"
-          >
-            <img src="/logo.png" alt="TipJar Logo" className="h-10 w-10 object-contain" />
+          {/* ── Enhanced Logo with ring + pulse glow ── */}
+          <Link href="/" className="inline-block">
+            <div
+              className="animate-pulse-glow-staking relative mx-auto flex h-20 w-20 items-center justify-center rounded-[var(--radius)]"
+              style={{
+                background: "linear-gradient(135deg, rgba(139,92,246,0.2), rgba(98,214,255,0.1))",
+                border: "1px solid rgba(139,92,246,0.25)",
+                boxShadow: "0 0 40px rgba(139,92,246,0.2), 0 0 0 8px rgba(139,92,246,0.06)",
+              }}
+            >
+              <img src="/logo.png" alt="TipJar Logo" className="h-12 w-12 object-contain" />
+            </div>
           </Link>
           <h1 className="mt-6 text-3xl font-black tracking-tight text-white">Sign in</h1>
           <p className="mt-2 text-[#9aa3b2]">Access your TipJar dashboard.</p>
         </div>
 
         <form onSubmit={handleSignIn} className="flex flex-col gap-5">
+          {/* ── Email field with icon ── */}
           <div>
-            <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.24em] text-[#7d8796]">
+            <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
               Email address
             </label>
-            <input
-              className="dashboard-input"
-              type="email"
-              placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <AtSign
+                size={16}
+                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#5f747c]"
+              />
+              <input
+                className="dashboard-input pl-10"
+                type="email"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
           </div>
 
+          {/* ── Gap divider ── */}
+          <div className="h-px w-full" style={{ background: "rgba(255,255,255,0.04)" }} />
+
+          {/* ── Password field with icon ── */}
           <div>
-            <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.24em] text-[#7d8796]">
+            <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
               Password
             </label>
-            <input
-              className="dashboard-input"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <Lock
+                size={16}
+                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#5f747c]"
+              />
+              <input
+                className="dashboard-input pl-10"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
           </div>
 
+          {/* ── Error state with icon ── */}
           {error ? (
-            <div className="rounded-[1rem] border border-red-400/18 bg-red-400/10 px-4 py-3 text-sm font-semibold text-red-400">
-              {error}
+            <div className="flex items-start gap-2 rounded-[var(--radius-sm)] border border-red-400/18 bg-red-400/10 px-4 py-3 text-sm font-semibold text-red-400">
+              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+              <span>{error}</span>
             </div>
           ) : null}
 
@@ -86,9 +120,21 @@ export default function SignInPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-[11px] font-bold uppercase tracking-[0.24em] text-[#66707f]">
-          Protected by multi-party computation
-        </p>
+        {/* ── Trust footer pill ── */}
+        <div className="mt-6 flex justify-center">
+          <div
+            className="inline-flex items-center gap-2 rounded-full px-4 py-2"
+            style={{
+              background: "rgba(98,214,255,0.04)",
+              border: "1px solid rgba(98,214,255,0.1)",
+            }}
+          >
+            <ShieldCheck size={14} className="text-[#62d6ff]" />
+            <span className="text-[0.7rem] font-bold uppercase tracking-[0.26em] text-[#7db8c0]">
+              Protected by multi-party computation
+            </span>
+          </div>
+        </div>
       </section>
     </div>
   );
