@@ -102,8 +102,8 @@ function CreatorCard({ creator }: { creator: any }) {
           <div
             className="rounded-[var(--radius-sm)] p-3.5"
             style={{
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.05)",
+              background: "#0a0c14",
+              border: "1px solid rgba(255,255,255,0.03)",
             }}
           >
             <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
@@ -116,8 +116,8 @@ function CreatorCard({ creator }: { creator: any }) {
           <div
             className="rounded-[var(--radius-sm)] p-3.5 text-right"
             style={{
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.05)",
+              background: "#0a0c14",
+              border: "1px solid rgba(255,255,255,0.03)",
             }}
           >
             <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
@@ -142,7 +142,6 @@ function CreatorCard({ creator }: { creator: any }) {
     </ScrollReveal>
   );
 }
-
 function DiscoverFeed() {
   const { creators, loading } = useCreators();
 
@@ -164,12 +163,14 @@ function DiscoverFeed() {
 
   return (
     <div className="mx-auto w-full max-w-[1500px]" id="feed-page">
-      <section className="relative isolate overflow-hidden rounded-[2.5rem] bg-black/20 backdrop-blur-xl p-8 md:p-12 shadow-2xl border border-white/[0.04]">
-        {/* ── Background Grid ── */}
-        <div className="pointer-events-none absolute inset-0 opacity-[0.03] [background-image:linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] [background-size:40px_40px]" />
+      {/* ── Main Container: Enhanced border and shadow ── */}
+      <section className="relative isolate overflow-hidden rounded-[2.5rem] bg-black/40 backdrop-blur-2xl p-8 md:p-12 shadow-[0_8px_32px_0_rgba(162,92,246,0.1)] border border-white/10">
 
-        {/* ── Ambient Radial Glows ── */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(162,92,246,0.08),transparent_70%),radial-gradient(ellipse_at_bottom_left,rgba(0,210,255,0.06),transparent_60%)]" />
+        {/* ── Background Grid ── */}
+        <div className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] [background-size:40px_40px]" />
+
+        {/* ── Ambient Radial Glows: Slightly intensified ── */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(162,92,246,0.12),transparent_70%),radial-gradient(ellipse_at_bottom_left,rgba(0,210,255,0.08),transparent_60%)]" />
 
         <div className="relative z-10 w-full">
           <header className="mb-10">
@@ -184,14 +185,17 @@ function DiscoverFeed() {
           </header>
 
           {loading ? (
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="wallet-skeleton h-[220px] w-full rounded-[var(--radius)]" />
+                <div key={i} className="wallet-skeleton h-[220px] w-full rounded-3xl border border-white/5" />
               ))}
             </div>
           ) : creators.length === 0 ? (
-            <div className="card flex flex-col items-center gap-4 py-20 text-center">
-              <Activity size={42} className="text-white/35" />
+            /* ── Empty State: Dashed border approach ── */
+            <div className="flex flex-col items-center gap-4 py-24 text-center rounded-3xl border-2 border-dashed border-white/10 bg-white/[0.01] backdrop-blur-sm">
+              <div className="rounded-full bg-white/5 p-4 mb-2">
+                <Activity size={36} className="text-white/40" />
+              </div>
               <h3 className="text-2xl font-extrabold text-white">No creators found</h3>
               <p className="max-w-md text-sm text-[#8aa0a8]">
                 The dashboard is ready, but the first creator profiles have not been added yet.
@@ -199,28 +203,21 @@ function DiscoverFeed() {
             </div>
           ) : (
             <>
-              {/* ── Stats ribbon ── */}
-              <section
-                className="mb-8 flex flex-col items-stretch gap-0 overflow-hidden rounded-[var(--radius)] sm:flex-row"
-                style={{
-                  background: "rgba(255,255,255,0.02)",
-                  border: "1px solid rgba(255,255,255,0.035)",
-                }}
-              >
+              {/* ── Stats ribbon: Replaced inline styles with responsive Tailwind divides ── */}
+              <section className="mb-10 flex flex-col sm:flex-row items-stretch overflow-hidden rounded-2xl bg-white/[0.02] border border-white/10 divide-y sm:divide-y-0 sm:divide-x divide-white/10 backdrop-blur-md shadow-inner">
                 {[
                   { label: "Creators", value: String(metrics.totalCreators).padStart(2, "0") },
                   { label: "Total tipped", value: `◎ ${metrics.totalVolume.toFixed(2)}` },
                   { label: "Support actions", value: metrics.totalTips.toString() },
-                ].map((stat, i) => (
+                ].map((stat) => (
                   <div
                     key={stat.label}
-                    className="flex-1 px-6 py-4"
-                    style={i > 0 ? { borderLeft: "1px solid rgba(255,255,255,0.05)" } : {}}
+                    className="flex-1 px-6 py-5 hover:bg-white/[0.02] transition-colors duration-300"
                   >
-                    <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#8aa0a8]">
                       {stat.label}
                     </p>
-                    <p className="mt-2 text-2xl font-extrabold tracking-tight text-white">
+                    <p className="mt-2 text-3xl font-extrabold tracking-tight text-white drop-shadow-sm">
                       {stat.value}
                     </p>
                   </div>
@@ -228,20 +225,22 @@ function DiscoverFeed() {
               </section>
 
               <section>
-                <div className="mb-5 flex items-center justify-between gap-4">
+                <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#8aa0a8]">
                       Creator list
                     </p>
-                    <h2 className="mt-2 text-2xl font-extrabold text-white">Available creators</h2>
+                    <h2 className="mt-1 text-2xl font-extrabold text-white">Available creators</h2>
                   </div>
-                  <div className="dashboard-chip">
-                    <Users size={14} />
-                    {metrics.topCreator?.displayName || "Top creator available"}
+
+                  {/* ── Top Creator Badge ── */}
+                  <div className="dashboard-chip flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-white/90 shadow-sm backdrop-blur-md">
+                    <Users size={16} className="text-[#a25cf6]" />
+                    <span>{metrics.topCreator?.displayName || "Top creator available"}</span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
                   {creators.map((creator) => (
                     <CreatorCard key={creator.id} creator={creator} />
                   ))}

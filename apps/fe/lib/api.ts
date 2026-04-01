@@ -155,3 +155,40 @@ export async function getTransactions(token: string): Promise<{ transactions: Tr
   });
   return handle(res);
 }
+
+/* ── Revenue Splits ─────────────────────────── */
+
+export interface RevenueSplit {
+  id: string;
+  creatorId: string;
+  collaboratorAddress: string;
+  label: string;
+  percentage: number;
+}
+
+export async function getSplits(token: string): Promise<{ splits: RevenueSplit[] }> {
+  const res = await fetch(`${BASE}/user/splits`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handle(res);
+}
+
+export async function addSplit(
+  token: string,
+  body: { collaboratorAddress: string; label: string; percentage: number }
+): Promise<{ split: RevenueSplit }> {
+  const res = await fetch(`${BASE}/user/splits`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify(body),
+  });
+  return handle(res);
+}
+
+export async function deleteSplit(token: string, splitId: string): Promise<{ success: boolean }> {
+  const res = await fetch(`${BASE}/user/splits/${splitId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handle(res);
+}

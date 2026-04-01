@@ -87,9 +87,17 @@ export default function CreatorProfilePage() {
 
   return (
     <RequireAuth>
-      <div className="mx-auto max-w-5xl" id="creator-profile">
-        {/* ── Profile Header (palette-aligned) ── */}
-        <header className="mb-12 flex flex-col items-center gap-8 md:flex-row">
+      <div className="mx-auto w-full max-w-[1500px]" id="creator-profile">
+        <section className="relative isolate overflow-hidden rounded-[2.5rem] bg-black/20 backdrop-blur-xl p-8 md:p-12 shadow-[0_0_80px_rgba(0,0,0,0.5)] border border-white/[0.04]">
+          {/* ── Background Grid ── */}
+          <div className="pointer-events-none absolute inset-0 opacity-[0.03] [background-image:linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] [background-size:40px_40px]" />
+  
+          {/* ── Ambient Radial Glows ── */}
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(162,92,246,0.08),transparent_70%),radial-gradient(ellipse_at_bottom_left,rgba(0,210,255,0.06),transparent_60%)]" />
+  
+          <div className="relative z-10 w-full">
+            {/* ── Profile Header (palette-aligned) ── */}
+            <header className="mb-12 flex flex-col items-center gap-8 md:flex-row">
           {/* Avatar ring: accent-gradient */}
           <div
             className="h-24 w-24 rounded-full p-[2px]"
@@ -138,7 +146,7 @@ export default function CreatorProfilePage() {
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[0.8fr_1.2fr]">
           {/* ── Tip Form ── */}
-          <div className="card sticky top-6 h-fit">
+          <div className="dashboard-panel flex flex-col relative text-left sticky top-6 h-fit">
             <div className="mb-6 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#8b5cf6]/14 bg-[#8b5cf6]/10 text-[#b58cff]">
                 <Heart size={18} />
@@ -206,7 +214,7 @@ export default function CreatorProfilePage() {
           </div>
 
           {/* ── Activity Feed ── */}
-          <div className="card">
+          <div className="dashboard-panel flex flex-col relative text-left">
             <div className="mb-6 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#8b5cf6]/14 bg-[#8b5cf6]/10 text-[#b58cff]">
                 <FileText size={18} />
@@ -283,6 +291,8 @@ export default function CreatorProfilePage() {
         </div>
 
         <StatusNotification kind={status.kind} message={status.msg} />
+          </div>
+        </section>
       </div>
     </RequireAuth>
   );

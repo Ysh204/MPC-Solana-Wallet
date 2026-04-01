@@ -90,6 +90,9 @@ export default function Sidebar({
       {!isCollapsed && (
         <div className="absolute inset-y-6 right-0 hidden w-px bg-white/[0.04] pointer-events-none lg:block" />
       )}
+      
+      {/* ── Background Grid ── */}
+      <div className="pointer-events-none absolute inset-0 rounded-[2rem] overflow-hidden opacity-[0.03] [background-image:linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] [background-size:40px_40px]" />
 
       {/* ── Logo Section ── */}
       <div

@@ -72,7 +72,7 @@ export default function SignInPage() {
                 className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#5f747c]"
               />
               <input
-                className="dashboard-input pl-10"
+                className="dashboard-input !pl-11"
                 type="email"
                 placeholder="name@example.com"
                 value={email}
@@ -96,7 +96,7 @@ export default function SignInPage() {
                 className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#5f747c]"
               />
               <input
-                className="dashboard-input pl-10"
+                className="dashboard-input !pl-11"
                 type="password"
                 placeholder="••••••••"
                 value={password}

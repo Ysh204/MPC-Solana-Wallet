@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { prismaClient } from "db/client";
 import jwt from "jsonwebtoken";
-import { SignupSchema, TipSchema, ProfileSchema, SendSchema } from "common/inputs";
+import { SignupSchema, TipSchema, ProfileSchema, SendSchema, RevenueSplitSchema } from "common/inputs";
 import { authMiddleware } from "../middleware";
 import { cli, MPC_SERVERS, MPC_THRESHOLD } from "./admin";
 import axios from "axios";
@@ -74,6 +74,76 @@ router.put("/profile", authMiddleware, async (req, res) => {
     });
     res.json({ user });
 });
+
+// --- Revenue Splits ---
+
+// Get all splits
+router.get("/splits", authMiddleware, async (req, res) => {
+    const splits = await prismaClient.revenueSplit.findMany({
+        where: { creatorId: req.userId! }
+    });
+    res.json({ splits });
+});
+
+// Add a split
+router.post("/splits", authMiddleware, async (req, res) => {
+    const { success, data } = RevenueSplitSchema.safeParse(req.body);
+    if (!success) {
+        res.status(400).json({ message: "Invalid split parameters. Ensure valid address, label, and percentage <= 100." });
+        return;
+    }
+
+    const creator = await prismaClient.user.findFirst({
+        where: { id: req.userId },
+        include: { splits: true }
+    });
+
+    if (!creator || creator.role !== "CREATOR") {
+        res.status(403).json({ message: "Only creators can configure revenue splits." });
+        return;
+    }
+
+    const currentTotal = creator.splits.reduce((sum, s) => sum + s.percentage, 0);
+    if (currentTotal + data.percentage > 100) {
+        res.status(400).json({ message: "Total split percentage cannot exceed 100%." });
+        return;
+    }
+
+    try {
+        const split = await prismaClient.revenueSplit.create({
+            data: {
+                creatorId: req.userId!,
+                collaboratorAddress: data.collaboratorAddress,
+                label: data.label,
+                percentage: data.percentage
+            }
+        });
+        res.json({ split });
+    } catch (e: any) {
+        // Handle unique constraint if they add same address twice
+        if (e.code === 'P2002') {
+            res.status(400).json({ message: "You already have a split configured for this address." });
+            return;
+        }
+        res.status(500).json({ message: "Failed to create split." });
+    }
+});
+
+// Delete a split
+router.delete("/splits/:id", authMiddleware, async (req, res) => {
+    try {
+        await prismaClient.revenueSplit.deleteMany({
+            where: {
+                id: req.params.id,
+                creatorId: req.userId!
+            }
+        });
+        res.json({ success: true });
+    } catch (e) {
+        res.status(500).json({ message: "Failed to delete split." });
+    }
+});
+
 
 // List all creators (public)
 router.get("/creators", authMiddleware, async (req, res) => {

@@ -11,11 +11,14 @@ import {
   Sparkles,
   User,
   UserRound,
+  Trash2,
+  Plus,
+  Percent
 } from "lucide-react";
 
 import RequireAuth from "../../../components/RequireAuth";
 import ScrollReveal from "../../../components/ScrollReveal";
-import { getProfile, updateProfile, UserProfile } from "../../../lib/api";
+import { getProfile, updateProfile, UserProfile, getSplits, addSplit, deleteSplit, RevenueSplit } from "../../../lib/api";
 
 export default function SettingsPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -30,27 +33,44 @@ export default function SettingsPage() {
     msg: string;
   }>({ kind: "", msg: "" });
 
+  const [splits, setSplits] = useState<RevenueSplit[]>([]);
+  const [newSplitLabel, setNewSplitLabel] = useState("");
+  const [newSplitAddress, setNewSplitAddress] = useState("");
+  const [newSplitPercentage, setNewSplitPercentage] = useState("");
+  const [splitStatus, setSplitStatus] = useState<{
+    kind: "success" | "error" | "loading" | "";
+    msg: string;
+  }>({ kind: "", msg: "" });
+
   useEffect(() => {
-    async function loadProfile() {
+    async function loadData() {
       const token = localStorage.getItem("token");
       if (!token) return;
 
       try {
-        const data = await getProfile(token);
-        if (data.user) {
-          setProfile(data.user);
-          setDisplayName(data.user.displayName || "");
-          setBio(data.user.bio || "");
-          setAvatarUrl(data.user.avatarUrl || "");
+        const [profileData, splitsData] = await Promise.all([
+          getProfile(token).catch(e => { console.error(e); return { user: null }; }),
+          getSplits(token).catch(e => { console.error(e); return { splits: [] }; })
+        ]);
+        
+        if (profileData.user) {
+          setProfile(profileData.user);
+          setDisplayName(profileData.user.displayName || "");
+          setBio(profileData.user.bio || "");
+          setAvatarUrl(profileData.user.avatarUrl || "");
+        }
+
+        if (splitsData.splits) {
+          setSplits(splitsData.splits);
         }
       } catch (e) {
-        console.error("Failed to load profile", e);
+        console.error("Failed to load data", e);
       } finally {
         setLoading(false);
       }
     }
 
-    loadProfile();
+    loadData();
   }, []);
 
   async function handleSave(e: React.FormEvent) {
@@ -81,6 +101,50 @@ export default function SettingsPage() {
     }
   }
 
+  async function handleAddSplit(e: React.FormEvent) {
+    e.preventDefault();
+    setSplitStatus({ kind: "loading", msg: "Adding split..." });
+
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const percentage = parseFloat(newSplitPercentage);
+      if (isNaN(percentage) || percentage <= 0 || percentage > 100) {
+        throw new Error("Invalid percentage");
+      }
+      const res = await addSplit(token, {
+        collaboratorAddress: newSplitAddress,
+        label: newSplitLabel,
+        percentage
+      });
+
+      setSplits([...splits, res.split]);
+      setNewSplitLabel("");
+      setNewSplitAddress("");
+      setNewSplitPercentage("");
+      setSplitStatus({ kind: "success", msg: "Split added successfully." });
+      setTimeout(() => setSplitStatus({ kind: "", msg: "" }), 2000);
+    } catch (err: any) {
+      setSplitStatus({ kind: "error", msg: err?.message || "Failed to add split" });
+      setTimeout(() => setSplitStatus({ kind: "", msg: "" }), 4000);
+    }
+  }
+
+  async function handleDeleteSplit(id: string) {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    if (!confirm("Are you sure you want to remove this collaborator?")) return;
+
+    try {
+      await deleteSplit(token, id);
+      setSplits(splits.filter(s => s.id !== id));
+    } catch (err: any) {
+      alert(err?.message || "Failed to delete split");
+    }
+  }
+
   // Button state styles
   const buttonStyles = (() => {
     if (status.kind === "loading") return "btn btn-primary opacity-60 px-8";
@@ -108,7 +172,15 @@ export default function SettingsPage() {
   return (
     <RequireAuth>
       <div className="mx-auto w-full max-w-[1350px]" id="settings-page">
-        <header className="mb-8 flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+        <section className="relative isolate overflow-hidden rounded-[2.5rem] bg-black/20 backdrop-blur-xl p-8 md:p-12 shadow-[0_0_80px_rgba(0,0,0,0.5)] border border-white/[0.04]">
+          {/* ── Background Grid ── */}
+          <div className="pointer-events-none absolute inset-0 opacity-[0.03] [background-image:linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] [background-size:40px_40px]" />
+
+          {/* ── Ambient Radial Glows ── */}
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(162,92,246,0.08),transparent_70%),radial-gradient(ellipse_at_bottom_left,rgba(0,210,255,0.06),transparent_60%)]" />
+
+          <div className="relative z-10 w-full">
+            <header className="mb-8 flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
           <div>
             <div className="dashboard-chip dashboard-chip-strong mb-4">
               <Sparkles size={14} />
@@ -309,8 +381,142 @@ export default function SettingsPage() {
                 </form>
               </div>
             </div>
+
+            {profile?.role === "CREATOR" && (
+              <div className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-[0.82fr_1.18fr]">
+                <div className="dashboard-panel">
+                  <div className="mb-6 flex items-center gap-4">
+                    <div
+                      className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-[var(--radius)]"
+                      style={{
+                        border: "1px solid rgba(168,85,247,0.2)",
+                        background: "#0f1822",
+                      }}
+                    >
+                      <Percent className="text-[#c084fc]" size={28} />
+                    </div>
+
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
+                        Revenue Sharing
+                      </p>
+                      <h2 className="text-2xl font-extrabold text-white">
+                        Revenue Splits
+                      </h2>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="dashboard-soft-panel rounded-[var(--radius-md)] p-4">
+                      <p className="text-sm leading-6 text-[#8ba1a9]">
+                        Distribute a percentage of every tip you receive directly to collaborators, charities, or other wallets. The transaction is instantly split using Multi-Party Computation (MPC).
+                      </p>
+                    </div>
+                    {splits.length > 0 && (
+                      <div className="dashboard-soft-panel rounded-[var(--radius-md)] p-4">
+                        <p className="text-sm font-bold text-white mb-2">Current Breakdown</p>
+                        <div className="space-y-2">
+                          {splits.map(s => (
+                             <div key={s.id} className="flex items-center justify-between text-sm p-3 bg-white/[0.02] rounded-md border border-white/5 transition-colors hover:bg-white/[0.04]">
+                               <div>
+                                 <p className="text-white font-medium">{s.label} <span className="text-[#8ba1a9]">({s.percentage}%)</span></p>
+                                 <p className="text-[#5f747c] text-xs font-mono tracking-wider mt-1">{s.collaboratorAddress}</p>
+                               </div>
+                               <button onClick={() => handleDeleteSplit(s.id)} className="text-[#fb7185]/70 hover:text-[#fb7185] transition-colors p-2" title="Remove Collaborator">
+                                 <Trash2 size={16} />
+                               </button>
+                             </div>
+                          ))}
+                          <div className="mt-4 pt-3 border-t border-white/5 flex justify-between text-sm font-bold text-[#8ba1a9]">
+                             <span>Total Allocated</span>
+                             <span className={splits.reduce((a,b) => a+b.percentage, 0) > 100 ? "text-[#fb7185]" : "text-white"}>{splits.reduce((a,b) => a+b.percentage, 0)}%</span>
+                          </div>
+                          <div className="flex justify-between text-sm font-bold text-[#8ba1a9]">
+                             <span>Remaining for you</span>
+                             <span className={splits.reduce((a,b) => a+b.percentage, 0) > 100 ? "text-[#fb7185]" : "text-[#4ade80]"}>{Math.max(0, 100 - splits.reduce((a,b) => a+b.percentage, 0))}%</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="dashboard-panel flex flex-col justify-center">
+                  <form onSubmit={handleAddSplit} className="flex flex-col gap-5">
+                    <div>
+                      <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
+                        Collaborator Label
+                      </label>
+                      <input
+                        className="dashboard-input"
+                        placeholder="e.g. Co-Host, Charity Fund, Marketing Team"
+                        value={newSplitLabel}
+                        onChange={(e) => setNewSplitLabel(e.target.value)}
+                        required
+                        maxLength={50}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
+                        Solana Address
+                      </label>
+                      <input
+                        className="dashboard-input font-mono tracking-wider text-sm"
+                        placeholder="e.g. 7X3k..."
+                        value={newSplitAddress}
+                        onChange={(e) => setNewSplitAddress(e.target.value)}
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
+                        Percentage (%)
+                      </label>
+                      <input
+                        type="number"
+                        min="0.1"
+                        max="100"
+                        step="0.1"
+                        className="dashboard-input"
+                        placeholder="e.g. 15"
+                        value={newSplitPercentage}
+                        onChange={(e) => setNewSplitPercentage(e.target.value)}
+                        required
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-4 border-t border-white/6 pt-5 sm:flex-row sm:items-center sm:justify-between">
+                      <span
+                        className={`text-sm font-semibold ${
+                          splitStatus.kind === "error"
+                            ? "text-[#fb7185]"
+                            : splitStatus.kind === "success"
+                              ? "text-[#4ade80]"
+                              : "text-[#8ba1a9]"
+                        }`}
+                      >
+                        {splitStatus.msg || "Add to your on-chain revenue split."}
+                      </span>
+
+                      <button
+                        type="submit"
+                        disabled={splitStatus.kind === "loading" || splits.reduce((a,b) => a+b.percentage, 0) + parseFloat(newSplitPercentage || "0") > 100}
+                        className={`btn px-8 ${splitStatus.kind === "loading" ? "btn-primary opacity-60" : "btn-primary"} ${splits.reduce((a,b) => a+b.percentage, 0) + parseFloat(newSplitPercentage || "0") > 100 ? "opacity-50 cursor-not-allowed" : ""}`}
+                      >
+                         {splitStatus.kind === "loading" ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
+                         {splitStatus.kind === "loading" ? "Adding..." : "Add Split"}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
           </ScrollReveal>
         )}
+          </div>
+        </section>
       </div>
     </RequireAuth>
   );
