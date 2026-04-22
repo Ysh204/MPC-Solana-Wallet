@@ -1,6 +1,6 @@
 import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { createMPCSigner } from '../mpc/ed25519';
-import { 
+import type {
   TSSTransactionDetails, 
   AggSignStepOneData, 
   AggSignStepTwoData, 

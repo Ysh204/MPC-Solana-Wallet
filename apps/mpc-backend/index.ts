@@ -1,7 +1,7 @@
 import express from "express";
-import { prismaClient } from "mpc-db/client";
-import { TSSCli } from 'solana-mpc-tss-lib/mpc';
-import { NETWORK } from "common/solana";
+import { prismaClient } from "../../packages/mpc-db/index";
+import { TSSCli } from "../../packages/solana-mpc-tss/src/index";
+import { NETWORK } from "../../packages/common/solana";
 
 const cli = new TSSCli(NETWORK);
 

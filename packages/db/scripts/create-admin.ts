@@ -3,8 +3,6 @@ import { prismaClient } from "../index";
 type ParsedArgs = {
   email?: string;
   password?: string;
-  phone?: string;
-  displayName?: string;
 };
 
 function parseArgs(argv: string[]): ParsedArgs {
@@ -26,16 +24,6 @@ function parseArgs(argv: string[]): ParsedArgs {
       continue;
     }
 
-    if (arg === "--phone" && next) {
-      parsed.phone = next;
-      i += 1;
-      continue;
-    }
-
-    if (arg === "--display-name" && next) {
-      parsed.displayName = next;
-      i += 1;
-    }
   }
 
   return parsed;
@@ -43,48 +31,37 @@ function parseArgs(argv: string[]): ParsedArgs {
 
 function printUsage() {
   console.error(
-    "Usage: bun run create-admin --email admin@example.com --password password123 --phone 1234567890 [--display-name \"Admin\"]"
+    "Usage: bun run create-admin --email admin@example.com --password password123"
   );
 }
 
 async function main() {
   const parsed = parseArgs(process.argv.slice(2));
 
-  if (!parsed.email || !parsed.password || !parsed.phone) {
+  if (!parsed.email || !parsed.password) {
     printUsage();
     process.exit(1);
   }
 
   const email = parsed.email;
   const password = parsed.password;
-  const phone = parsed.phone;
-  const displayName = parsed.displayName;
 
   if (password.length < 6) {
     console.error("Password must be at least 6 characters.");
     process.exit(1);
   }
 
-  if (phone.length < 7 || phone.length > 15) {
-    console.error("Phone must be between 7 and 15 characters.");
-    process.exit(1);
-  }
-
-  const existingUser = await prismaClient.user.findFirst({
-    where: {
-      OR: [{ email }, { phone }],
-    },
+  const existingUser = await prismaClient.user.findUnique({
+    where: { email },
     select: {
       id: true,
       email: true,
-      phone: true,
-      role: true,
+      isAdmin: true,
     },
   });
 
   if (existingUser) {
-    const duplicateField = existingUser.email === email ? "email" : "phone";
-    console.error(`A user with that ${duplicateField} already exists.`);
+    console.error("A user with that email already exists.");
     console.error(JSON.stringify(existingUser, null, 2));
     process.exit(1);
   }
@@ -93,16 +70,12 @@ async function main() {
     data: {
       email,
       password,
-      phone,
-      role: "ADMIN",
-      displayName: displayName || email.split("@")[0],
+      isAdmin: true,
     },
     select: {
       id: true,
       email: true,
-      phone: true,
-      role: true,
-      displayName: true,
+      isAdmin: true,
     },
   });
 

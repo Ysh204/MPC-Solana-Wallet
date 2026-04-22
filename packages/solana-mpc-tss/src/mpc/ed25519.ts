@@ -1,5 +1,5 @@
 import { PublicKey } from '@solana/web3.js';
-import { MPCSigner } from './Signer';
+import type { MPCSigner } from './Signer';
 import * as nacl from 'tweetnacl';
 
 /**

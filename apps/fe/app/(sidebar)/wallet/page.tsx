@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import {
-  ArrowUpRight,
   Copy,
   ExternalLink,
   RefreshCcw,
@@ -77,10 +76,10 @@ function AccountInfo({
                 <span className="h-2 w-2 animate-pulse rounded-full bg-[#4ade80]" />
               </div>
               <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-white">
-                MPC Vault
+                MPC Wallet
               </h2>
               <p className="mt-2 max-w-xl text-sm text-[#8da3ab]">
-                A denser wallet summary with the same secure MPC-backed account details.
+                Review the public key, balance, and network state managed by your MPC-backed wallet.
               </p>
             </div>
             <button
@@ -138,7 +137,7 @@ function AccountInfo({
             <span className="text-lg font-extrabold text-white">Connected</span>
           </div>
           <p className="mt-3 text-sm text-[#8ba1a9]">
-            Enterprise-grade wallet controls with a tighter dashboard presentation.
+            Session is active and ready for secure transfers and transaction lookups.
           </p>
         </div>
       </div>
@@ -230,7 +229,7 @@ function SendForm({
             Execution notes
           </p>
           <p className="mt-2 text-sm leading-6 text-[#8ca1a8]">
-            Transfers use the same backend wallet flow, now framed in the darker reference-inspired panel style.
+            Transfers are signed through the MPC wallet backend before being broadcast to Solana.
           </p>
         </div>
 
@@ -396,13 +395,13 @@ export default function WalletPage() {
           <div className="relative z-10 w-full">
             <header className="mb-8">
               <div>
-                <div className="dashboard-chip dashboard-chip-strong mb-4">Vault operations</div>
+                <div className="dashboard-chip dashboard-chip-strong mb-4">MPC secured wallet</div>
                 <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl">
                   Solana <span className="landing-gradient text-glow-staking">Wallet</span>
                 </h1>
                 <p className="mt-3 max-w-2xl text-base text-[#8aa1a9]">
-                  Powered by a secure MPC wallet, this dashboard provides a comprehensive view of your
-                  account details, transaction history, and transfer capabilities.
+                  Access your MPC-backed Solana account, send SOL, and review recent on-chain
+                  activity from one streamlined wallet page.
                 </p>
 
                 <div className="mt-6 flex flex-wrap gap-3">
@@ -463,7 +462,7 @@ function loadingOrNotFound(loading: boolean, notFound: boolean, onRefresh: () =>
       <div className="flex flex-col items-center gap-4 py-20">
         <div className="h-12 w-12 animate-spin rounded-full border-2 border-[#8b5cf6]/40 border-t-[#b58cff]" />
         <span className="text-xs font-bold uppercase tracking-[0.26em] text-[#b58cff]">
-          Syncing vault data
+          Syncing wallet data
         </span>
       </div>
     );

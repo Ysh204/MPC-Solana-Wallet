@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "TipJar — Creator Tipping Platform",
-  description: "Support your favorite creators with instant SOL tips, secured by MPC wallets.",
+  title: "Solana MPC Wallet",
+  description: "A simplified Solana wallet experience secured with multi-party computation.",
 };
 
 import GlobalBackground from "../components/layout/GlobalBackground";

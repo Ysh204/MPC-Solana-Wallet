@@ -1,7 +1,5 @@
 import { Connection, PublicKey, Keypair, clusterApiUrl, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { createMPCSigner } from '../mpc/ed25519';
-import { SolanaNetwork, TSSKeypair, AggregateWallet } from './types';
-import * as nacl from 'tweetnacl';
+import type { SolanaNetwork, TSSKeypair, AggregateWallet } from './types';
 
 /**
  * TSS Wallet implementation supporting all solana-tss functions
