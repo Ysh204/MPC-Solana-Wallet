@@ -1,12 +1,12 @@
 import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { createMPCSigner } from '../mpc/ed25519';
-import { 
-  TSSTransactionDetails, 
-  AggSignStepOneData, 
-  AggSignStepTwoData, 
-  PartialSignature,
+import type {
+  AggSignStepOneData,
+  AggSignStepTwoData,
+  AggregateWallet,
   CompleteSignature,
-  AggregateWallet 
+  PartialSignature,
+  TSSTransactionDetails,
 } from './types';
 import * as nacl from 'tweetnacl';
 import { createTransferTx } from '../solana/tx';

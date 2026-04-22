@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import {
-  ArrowUpRight,
   Copy,
   ExternalLink,
   RefreshCcw,
@@ -80,7 +79,7 @@ function AccountInfo({
                 MPC Vault
               </h2>
               <p className="mt-2 max-w-xl text-sm text-[#8da3ab]">
-                A denser wallet summary with the same secure MPC-backed account details.
+                View the aggregated public key and live balance exposed by the MPC signing backend.
               </p>
             </div>
             <button
@@ -138,7 +137,7 @@ function AccountInfo({
             <span className="text-lg font-extrabold text-white">Connected</span>
           </div>
           <p className="mt-3 text-sm text-[#8ba1a9]">
-            Enterprise-grade wallet controls with a tighter dashboard presentation.
+            This wallet can request MPC signatures and broadcast standard SOL transfers on devnet.
           </p>
         </div>
       </div>
@@ -230,7 +229,7 @@ function SendForm({
             Execution notes
           </p>
           <p className="mt-2 text-sm leading-6 text-[#8ca1a8]">
-            Transfers use the same backend wallet flow, now framed in the darker reference-inspired panel style.
+            The API coordinates nonce exchange, collects partial signatures, and broadcasts the final transaction.
           </p>
         </div>
 
@@ -398,11 +397,11 @@ export default function WalletPage() {
               <div>
                 <div className="dashboard-chip dashboard-chip-strong mb-4">Vault operations</div>
                 <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl">
-                  Solana <span className="landing-gradient text-glow-staking">Wallet</span>
+                  Solana <span className="landing-gradient">Wallet</span>
                 </h1>
                 <p className="mt-3 max-w-2xl text-base text-[#8aa1a9]">
-                  Powered by a secure MPC wallet, this dashboard provides a comprehensive view of your
-                  account details, transaction history, and transfer capabilities.
+                  Powered by an MPC-backed signer set, this workspace focuses on balances,
+                  transfers, and transaction history without the older tipping or staking flows.
                 </p>
 
                 <div className="mt-6 flex flex-wrap gap-3">

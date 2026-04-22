@@ -1,7 +1,12 @@
 import { PublicKey } from '@solana/web3.js';
 import { TSSWallet } from './wallet';
 import { TSSSigningService } from './signing';
-import { SolanaNetwork, TSSTransactionDetails, AggSignStepOneData, AggSignStepTwoData } from './types';
+import type {
+  AggSignStepOneData,
+  AggSignStepTwoData,
+  SolanaNetwork,
+  TSSTransactionDetails,
+} from './types';
 
 /**
  * CLI interface matching the original solana-tss functionality

@@ -20,7 +20,6 @@ export default function SignInPage() {
     try {
       const { token, user } = await signin({ email, password });
       localStorage.setItem("token", token);
-      localStorage.setItem("role", user.role);
       localStorage.setItem("userId", user.id);
       localStorage.setItem("email", email);
       window.location.href = "/dashboard";
@@ -33,7 +32,6 @@ export default function SignInPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden p-6">
-      {/* Darken the animated wave background on this page */}
       <div className="fixed inset-0 z-0 bg-[#050507]/80" />
       <div
         className="fixed inset-0 z-0 pointer-events-none"
@@ -43,7 +41,6 @@ export default function SignInPage() {
       />
       <section className="dashboard-panel relative z-10 mx-auto w-full max-w-xl">
         <div className="mb-8 text-center">
-          {/* ── Enhanced Logo with ring + pulse glow ── */}
           <Link href="/" className="inline-block">
             <div
               className="animate-pulse-glow-staking relative mx-auto flex h-20 w-20 items-center justify-center rounded-[var(--radius)]"
@@ -53,15 +50,14 @@ export default function SignInPage() {
                 boxShadow: "0 0 40px rgba(139,92,246,0.2), 0 0 0 8px rgba(139,92,246,0.06)",
               }}
             >
-              <img src="/logo.png" alt="TipJar Logo" className="h-12 w-12 object-contain" />
+              <img src="/logo.png" alt="MPC Wallet Logo" className="h-12 w-12 object-contain" />
             </div>
           </Link>
           <h1 className="mt-6 text-3xl font-black tracking-tight text-white">Sign in</h1>
-          <p className="mt-2 text-[#9aa3b2]">Access your TipJar dashboard.</p>
+          <p className="mt-2 text-[#9aa3b2]">Access your MPC-protected Solana wallet.</p>
         </div>
 
         <form onSubmit={handleSignIn} className="flex flex-col gap-5">
-          {/* ── Email field with icon ── */}
           <div>
             <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
               Email address
@@ -82,10 +78,8 @@ export default function SignInPage() {
             </div>
           </div>
 
-          {/* ── Gap divider ── */}
           <div className="h-px w-full" style={{ background: "rgba(255,255,255,0.04)" }} />
 
-          {/* ── Password field with icon ── */}
           <div>
             <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
               Password
@@ -106,7 +100,6 @@ export default function SignInPage() {
             </div>
           </div>
 
-          {/* ── Error state with icon ── */}
           {error ? (
             <div className="flex items-start gap-2 rounded-[var(--radius-sm)] border border-red-400/18 bg-red-400/10 px-4 py-3 text-sm font-semibold text-red-400">
               <AlertCircle size={15} className="mt-0.5 shrink-0" />
@@ -120,7 +113,6 @@ export default function SignInPage() {
           </button>
         </form>
 
-        {/* ── Trust footer pill ── */}
         <div className="mt-6 flex justify-center">
           <div
             className="inline-flex items-center gap-2 rounded-full px-4 py-2"

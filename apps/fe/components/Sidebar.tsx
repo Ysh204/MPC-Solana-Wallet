@@ -4,20 +4,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  Bell,
   ChevronLeft,
   ChevronRight,
-  Home,
   LayoutDashboard,
-  LifeBuoy,
   LogOut,
   Settings,
+  ShieldCheck,
   User,
   Wallet,
-  Zap,
 } from "lucide-react";
 
-import { getProfile, getTips, UserProfile } from "../lib/api";
+import { getProfile, UserProfile } from "../lib/api";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -33,20 +30,15 @@ export default function Sidebar({
   setIsCollapsed,
 }: SidebarProps) {
   const pathname = usePathname();
-  const [role, setRole] = useState<string | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [tipCount, setTipCount] = useState<number>(0);
 
   useEffect(() => {
-    const storedRole = localStorage.getItem("role");
     const storedEmail = localStorage.getItem("email");
-
-    setRole(storedRole);
 
     if (storedEmail) {
       setProfile({
         email: storedEmail,
-        displayName: storedRole === "CREATOR" ? "Creator" : "Member",
+        displayName: storedEmail.split("@")[0],
       } as UserProfile);
     }
 
@@ -56,30 +48,14 @@ export default function Sidebar({
     getProfile(token)
       .then((res) => setProfile(res.user))
       .catch((err) => console.error("Failed to fetch profile", err));
-
-    getTips(token)
-      .then((res) => setTipCount(res.received.length))
-      .catch((err) => console.error("Failed to fetch tips", err));
   }, []);
 
-  const topLink =
-    role === "CREATOR"
-      ? { name: "My Stats", href: "/dashboard", icon: LayoutDashboard }
-      : { name: "Discover", href: "/dashboard", icon: Home };
-
-  const navItems: { name: string; href: string; icon: any; badge?: number | null }[] = [
-    topLink,
-    { name: "My Tips", href: "/tips", icon: Bell, badge: tipCount > 0 ? tipCount : null },
+  const navItems = [
+    { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
     { name: "Wallet", href: "/wallet", icon: Wallet },
-    { name: "Stake", href: "/stake", icon: Zap },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
-
-  const roleLabel = role === "CREATOR" ? "Creator" : "Member";
-  const roleBadgeStyle =
-    role === "CREATOR"
-      ? "bg-[rgba(139,92,246,0.15)] text-[#b58cff]"
-      : "bg-[rgba(98,214,255,0.1)] text-[#62d6ff]";
+  const walletReady = Boolean(profile?.publicKey);
 
   return (
     <aside
@@ -112,19 +88,20 @@ export default function Sidebar({
             >
               <img
                 src="/logo.png"
-                alt="TipJar Logo"
+                alt="MPC Wallet Logo"
                 className="h-7 w-7 object-contain"
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).style.display = "none";
                   (e.currentTarget.parentElement as HTMLElement).innerHTML =
-                    '<span style="font-size:18px;font-weight:900;color:#b58cff">T</span>';
+                    '<span style="font-size:18px;font-weight:900;color:#b58cff">M</span>';
                 }}
               />
             </div>
             <div>
               <span className="text-[1.1rem] font-extrabold tracking-tight text-white">
-                TipJar
+                MPC Wallet
               </span>
+              <p className="text-[11px] text-[#7e959d]">Threshold signer</p>
             </div>
           </Link>
         )}
@@ -137,18 +114,18 @@ export default function Sidebar({
               border: "1px solid rgba(139,92,246,0.2)",
               boxShadow: "var(--glow-purple)",
             }}
-          >
-            <img
-              src="/logo.png"
-              alt="TipJar Logo"
-              className="h-7 w-7 object-contain"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).style.display = "none";
-                (e.currentTarget.parentElement as HTMLElement).innerHTML =
-                  '<span style="font-size:18px;font-weight:900;color:#b58cff">T</span>';
-              }}
-            />
-          </div>
+        >
+          <img
+            src="/logo.png"
+            alt="MPC Wallet Logo"
+            className="h-7 w-7 object-contain"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = "none";
+              (e.currentTarget.parentElement as HTMLElement).innerHTML =
+                '<span style="font-size:18px;font-weight:900;color:#b58cff">M</span>';
+            }}
+          />
+        </div>
         )}
 
         {/* ── Collapse Toggle ── */}
@@ -194,18 +171,6 @@ export default function Sidebar({
                 </span>
               )}
 
-              {!isCollapsed && item.badge ? (
-                <span
-                  className="rounded-full px-2 py-1 text-[13px] font-bold text-[#b58cff]"
-                  style={{
-                    background: "rgba(139,92,246,0.2)",
-                    border: "1px solid rgba(181,140,255,0.25)",
-                  }}
-                >
-                  {item.badge}
-                </span>
-              ) : null}
-
               {isCollapsed ? (
                 <div
                   className="pointer-events-none absolute left-full ml-4 whitespace-nowrap rounded-xl px-3 py-2 text-xs text-white opacity-0 shadow-2xl transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
@@ -223,7 +188,6 @@ export default function Sidebar({
           );
         })}
 
-        {/* ── Support Desk ── */}
         <div className={`mt-6 ${isCollapsed ? "px-0" : "px-2"}`}>
           <div
             className={`rounded-[var(--radius-md)] transition-all duration-300 ${
@@ -237,12 +201,14 @@ export default function Sidebar({
           >
             <div className={`flex items-center ${isCollapsed ? "justify-center" : "gap-3"}`}>
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#1a1430] text-[#62d6ff]">
-                <LifeBuoy size={18} />
+                <ShieldCheck size={18} />
               </div>
               {!isCollapsed && (
                 <div>
-                  <p className="text-sm font-bold text-white">Support Desk</p>
-                  <p className="text-xs text-[#7e959d]">Reporting and feedback</p>
+                  <p className="text-sm font-bold text-white">MPC Status</p>
+                  <p className="text-xs text-[#7e959d]">
+                    {walletReady ? "Wallet provisioned" : "Waiting for wallet setup"}
+                  </p>
                 </div>
               )}
             </div>
@@ -262,7 +228,7 @@ export default function Sidebar({
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
               style={{
                 background: "#0f1822",
-                border: `1px solid ${role === "CREATOR" ? "rgba(139,92,246,0.25)" : "rgba(98,214,255,0.2)"}`,
+                border: "1px solid rgba(98,214,255,0.2)",
               }}
             >
               {profile?.avatarUrl ? (
@@ -281,13 +247,17 @@ export default function Sidebar({
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <p className="truncate text-sm font-bold text-white">
-                      {profile?.displayName || (role === "CREATOR" ? "Creator Account" : "User Account")}
+                      {profile?.displayName || "Wallet User"}
                     </p>
                     <span
-                      className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase ${roleBadgeStyle}`}
+                      className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase ${
+                        walletReady
+                          ? "bg-[rgba(74,222,128,0.15)] text-[#4ade80]"
+                          : "bg-[rgba(98,214,255,0.1)] text-[#62d6ff]"
+                      }`}
                       style={{ letterSpacing: "0.08em" }}
                     >
-                      {roleLabel}
+                      {walletReady ? "Ready" : "Pending"}
                     </span>
                   </div>
                   <p className="truncate text-[11px] text-[#6e868e]">
@@ -300,7 +270,6 @@ export default function Sidebar({
                     onClick={() => {
                       localStorage.removeItem("token");
                       localStorage.removeItem("email");
-                      localStorage.removeItem("role");
                       localStorage.removeItem("userId");
                       window.location.href = "/signin";
                     }}
@@ -323,7 +292,6 @@ export default function Sidebar({
               onClick={() => {
                 localStorage.removeItem("token");
                 localStorage.removeItem("email");
-                localStorage.removeItem("role");
                 localStorage.removeItem("userId");
                 window.location.href = "/signin";
               }}
