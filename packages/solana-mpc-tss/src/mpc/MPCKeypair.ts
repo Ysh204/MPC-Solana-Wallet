@@ -1,6 +1,5 @@
-import { Transaction, PublicKey } from '@solana/web3.js';
-import type { Signer } from '@solana/web3.js';
-import type { MPCSigner } from './Signer';
+import { Signer, Transaction, PublicKey } from '@solana/web3.js';
+import { MPCSigner } from './Signer';
 
 export class MPCKeypair implements Signer {
   public publicKey: PublicKey;

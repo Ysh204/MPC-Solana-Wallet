@@ -1,12 +1,15 @@
 # db
 
-Prisma package for the main wallet database.
-
-It stores wallet users, hashed login credentials, the aggregated Solana public key, and the admin flag used for wallet provisioning flows.
-
-Useful commands from the repo root:
+To install dependencies:
 
 ```bash
-bun run prisma:studio
-bun run create-admin --email admin@example.com --password password123
+bun install
 ```
+
+To run:
+
+```bash
+bun run index.ts
+```
+
+This project was created using `bun init` in bun v1.2.2. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.

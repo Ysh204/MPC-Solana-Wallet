@@ -48,96 +48,39 @@
 /* ── Keyframes ── */
 
 @keyframes flow-right-up {
-  0% {
-    transform: translate(0, 0);
-  }
-
-  25% {
-    transform: translate(100px, -30px);
-  }
-
-  50% {
-    transform: translate(0, -50px);
-  }
-
-  75% {
-    transform: translate(-80px, -25px);
-  }
-
-  100% {
-    transform: translate(0, 0);
-  }
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(100px, -30px); }
+  50%  { transform: translate(0, -50px); }
+  75%  { transform: translate(-80px, -25px); }
+  100% { transform: translate(0, 0); }
 }
 
 @keyframes flow-right-down {
-  0% {
-    transform: translate(0, 0);
-  }
-
-  25% {
-    transform: translate(90px, 25px);
-  }
-
-  50% {
-    transform: translate(120px, 45px);
-  }
-
-  75% {
-    transform: translate(50px, 20px);
-  }
-
-  100% {
-    transform: translate(0, 0);
-  }
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(90px, 25px); }
+  50%  { transform: translate(120px, 45px); }
+  75%  { transform: translate(50px, 20px); }
+  100% { transform: translate(0, 0); }
 }
 
 @keyframes flow-left-down {
-  0% {
-    transform: translate(0, 0);
-  }
-
-  25% {
-    transform: translate(-90px, 30px);
-  }
-
-  50% {
-    transform: translate(0, 50px);
-  }
-
-  75% {
-    transform: translate(80px, 25px);
-  }
-
-  100% {
-    transform: translate(0, 0);
-  }
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-90px, 30px); }
+  50%  { transform: translate(0, 50px); }
+  75%  { transform: translate(80px, 25px); }
+  100% { transform: translate(0, 0); }
 }
 
 @keyframes flow-left-up {
-  0% {
-    transform: translate(0, 0);
-  }
-
-  25% {
-    transform: translate(-100px, -25px);
-  }
-
-  50% {
-    transform: translate(-120px, -45px);
-  }
-
-  75% {
-    transform: translate(-50px, -20px);
-  }
-
-  100% {
-    transform: translate(0, 0);
-  }
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-100px, -25px); }
+  50%  { transform: translate(-120px, -45px); }
+  75%  { transform: translate(-50px, -20px); }
+  100% { transform: translate(0, 0); }
 }
 
 /* Reduced motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
-
   .wave-group-1,
   .wave-group-2,
   .wave-group-3,
