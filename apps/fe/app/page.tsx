@@ -62,7 +62,7 @@ export default function LandingPage() {
             className="animate-fade-up text-[clamp(2.5rem,7vw,4.5rem)] font-black leading-[1.05] tracking-tight text-white"
             style={{ animationDelay: "0.1s" }}
           >
-            Secure your <span className="landing-gradient bg-clip-text text-transparent bg-gradient-to-r from-[#a25cf6] to-[#62d6ff]">Solana wallet</span> with MPC
+            <span className="landing-gradient bg-clip-text text-transparent bg-gradient-to-r from-[#a25cf6] to-[#62d6ff]">wallet on Solana</span> with MPC
           </h1>
 
           <p
