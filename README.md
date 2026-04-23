@@ -3,6 +3,8 @@
 
 A wallet-first Solana project secured by MPC (multi-party computation). The app provisions user wallets, stores MPC key shares on signing nodes, and sends SOL on devnet without a single service ever holding the full private key.
 
+#[Watch the Demo](https://www.youtube.com/watch?v=U1WGFzozPW8)
+
 ## What this repo includes
 
 - `apps/fe`: Next.js wallet UI on port `4000`
