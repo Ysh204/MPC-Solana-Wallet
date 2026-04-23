@@ -6,7 +6,8 @@
     "./client": "./index.ts"
   },
   "scripts": {
-    "create-admin": "bun run ./scripts/create-admin.ts"
+    "create-admin": "bun run ./scripts/create-admin.ts",
+    "repair-legacy-schema": "bun run ./scripts/repair-legacy-schema.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",

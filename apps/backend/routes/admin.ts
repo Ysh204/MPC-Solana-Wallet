@@ -3,7 +3,7 @@ import { TSSCli } from 'solana-mpc-tss-lib/mpc';
 import axios from "axios";
 import { prismaClient } from "db/client";
 import jwt from "jsonwebtoken";
-import { CreateUserSchema, SignupSchema, RevenueSplitSchema } from "common/inputs";
+import { CreateUserSchema, SignupSchema } from "common/inputs";
 import { adminAuthMiddleware } from "../middleware";
 import { NETWORK } from "common/solana";
 
@@ -33,11 +33,11 @@ router.post("/signin", async (req, res) => {
     }
 
     const user = await prismaClient.user.findFirst({
-        where: { email: data.email }
+        where: { email: data.email, role: "ADMIN" }
     });
 
     if (!user) {
-        res.status(403).json({ message: "User not found" })
+        res.status(403).json({ message: "Admin account not found" })
         return;
     }
 
@@ -50,7 +50,7 @@ router.post("/signin", async (req, res) => {
     res.json({ token });
 });
 
-// Create a user (creator or fan) with MPC wallet
+// Create a wallet user with an MPC-backed public key
 router.post("/create-user", adminAuthMiddleware, async (req, res) => {
     const {success, data} = CreateUserSchema.safeParse(req.body);
     if (!success) {
@@ -88,7 +88,6 @@ router.post("/create-user", adminAuthMiddleware, async (req, res) => {
                 email: data.email,
                 password: data.password,
                 phone: data.phone,
-                role: data.role === "CREATOR" ? "CREATOR" : "FAN",
                 displayName: data.displayName || data.email.split("@")[0],
             }
         });
@@ -125,7 +124,7 @@ router.post("/create-user", adminAuthMiddleware, async (req, res) => {
         }
 
         res.json({
-            message: "User created",
+            message: "Wallet user created",
             user: {
                 ...user,
                 publicKey: aggregatedPublicKey.aggregatedPublicKey
@@ -141,64 +140,20 @@ router.post("/create-user", adminAuthMiddleware, async (req, res) => {
     }
 })
 
-// List all creators with stats
-router.get("/creators", adminAuthMiddleware, async (req, res) => {
-    const creators = await prismaClient.user.findMany({
-        where: { role: "CREATOR" },
-        include: {
-            _count: { select: { tipsReceived: true } },
-            tipsReceived: { select: { amount: true } }
+router.get("/users", adminAuthMiddleware, async (_req, res) => {
+    const users = await prismaClient.user.findMany({
+        where: { role: { not: "ADMIN" } },
+        select: {
+            id: true,
+            email: true,
+            displayName: true,
+            publicKey: true,
+            createdAt: true
+        },
+        orderBy: {
+            createdAt: "desc"
         }
     });
 
-    res.json({
-        creators: creators.map(c => ({
-            id: c.id,
-            email: c.email,
-            displayName: c.displayName,
-            publicKey: c.publicKey,
-            totalTips: c.tipsReceived.reduce((sum, t) => sum + t.amount, 0),
-            tipCount: c._count.tipsReceived
-        }))
-    });
-})
-
-// Manage revenue splits for a creator
-router.post("/splits/:creatorId", adminAuthMiddleware, async (req, res) => {
-    const { creatorId } = req.params;
-    const { success, data } = RevenueSplitSchema.safeParse(req.body);
-    if (!success) {
-        res.status(400).json({ message: "Invalid input" });
-        return;
-    }
-
-    const creator = await prismaClient.user.findFirst({
-        where: { id: creatorId, role: "CREATOR" }
-    });
-
-    if (!creator) {
-        res.status(404).json({ message: "Creator not found" });
-        return;
-    }
-
-    const split = await prismaClient.revenueSplit.upsert({
-        where: {
-            creatorId_collaboratorAddress: {
-                creatorId,
-                collaboratorAddress: data.collaboratorAddress
-            }
-        },
-        create: { creatorId, ...data },
-        update: { label: data.label, percentage: data.percentage }
-    });
-
-    res.json({ split });
-})
-
-// Get splits for a creator
-router.get("/splits/:creatorId", adminAuthMiddleware, async (req, res) => {
-    const splits = await prismaClient.revenueSplit.findMany({
-        where: { creatorId: req.params.creatorId }
-    });
-    res.json({ splits });
-})
+    res.json({ users });
+});

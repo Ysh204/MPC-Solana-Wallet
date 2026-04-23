@@ -1,5 +1,5 @@
 {
-  "name": "college-cms",
+  "name": "mpc-solana-wallet",
   "private": true,
   "scripts": {
     "build": "turbo run build",

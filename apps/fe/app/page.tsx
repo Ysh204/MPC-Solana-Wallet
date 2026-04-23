@@ -1,114 +1,112 @@
 "use client";
 
 import Link from "next/link";
-import { TrendingUp, Wallet, Zap } from "lucide-react";
-
-import React from "react";
-// Assuming you have these imported:
-// import Link from "next/link"; // or react-router-dom
-// import { Zap, Wallet, TrendingUp } from "lucide-react";
+import { ArrowRight, Blocks, ShieldCheck, Wallet } from "lucide-react";
 
 export default function LandingPage() {
+  const features = [
+    {
+      title: "Threshold key management",
+      detail:
+        "Private key material stays split across MPC participants so a single signer never holds the whole key.",
+      icon: ShieldCheck,
+      color: "#2563eb",
+      bgColor: "rgba(37,99,235,0.1)",
+    },
+    {
+      title: "Wallet-first operations",
+      detail:
+        "Check balances, provision wallets, and send SOL from one focused Solana dashboard.",
+      icon: Wallet,
+      color: "#0f766e",
+      bgColor: "rgba(15,118,110,0.1)",
+    },
+    {
+      title: "Split backend architecture",
+      detail:
+        "A frontend app, an API server, and MPC signing nodes work together to approve and broadcast transfers.",
+      icon: Blocks,
+      color: "#b45309",
+      bgColor: "rgba(180,83,9,0.1)",
+    },
+  ];
+
+  function scrollToFeatures() {
+    document.getElementById("features")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden p-6">
-      {/* ── Atmospheric glow orbs ── */}
-      <div className="pointer-events-none absolute left-[12%] top-[8%] h-[500px] w-[500px] rounded-full bg-[#8b5cf6]/[0.08] blur-[200px]" />
-      <div className="pointer-events-none absolute bottom-[10%] right-[10%] h-[400px] w-[400px] rounded-full bg-[#62d6ff]/[0.06] blur-[180px]" />
+      <div className="pointer-events-none absolute left-[12%] top-[8%] h-[500px] w-[500px] rounded-full bg-[#3b82f6]/[0.09] blur-[200px] print:hidden" />
+      <div className="pointer-events-none absolute bottom-[10%] right-[10%] h-[400px] w-[400px] rounded-full bg-[#14b8a6]/[0.07] blur-[180px] print:hidden" />
 
       <main
         className="relative z-10 mx-auto w-full max-w-[850px] text-center"
         style={{ paddingTop: "2vh" }}
       >
-        {/* ── Main Container: Enhanced border and shadow to match feed ── */}
-        <section className="relative isolate overflow-hidden rounded-[2.5rem] bg-black/40 backdrop-blur-2xl p-8 md:p-14 shadow-[0_8px_32px_0_rgba(162,92,246,0.1)] border border-white/10">
+        <section className="relative isolate overflow-hidden rounded-[2.5rem] border border-slate-200/80 bg-white/80 p-8 shadow-[0_24px_70px_rgba(148,163,184,0.18)] backdrop-blur-2xl md:p-14">
+          <div className="pointer-events-none absolute inset-0 opacity-[0.04] print:hidden [background-image:linear-gradient(to_right,rgba(15,23,42,0.18)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.18)_1px,transparent_1px)] [background-size:40px_40px]" />
+          <div className="pointer-events-none absolute inset-0 print:hidden bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.1),transparent_70%),radial-gradient(ellipse_at_bottom_left,rgba(20,184,166,0.08),transparent_60%)]" />
 
-          {/* ── Background Grid ── */}
-          <div className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] [background-size:40px_40px]" />
-
-          {/* ── Ambient Radial Glows ── */}
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(162,92,246,0.12),transparent_70%),radial-gradient(ellipse_at_bottom_left,rgba(0,210,255,0.08),transparent_60%)]" />
-
-          {/* ── Eyebrow ── */}
           <p
-            className="animate-fade-in mb-5 text-[10px] font-bold uppercase text-[#8aa0a8]"
+            className="animate-fade-in mb-5 text-[10px] font-bold uppercase text-slate-500"
             style={{ letterSpacing: "0.32em", animationDelay: "0s" }}
           >
-            Solana · Creator Economy
+            Solana · MPC · Wallet Operations
           </p>
 
-          {/* ── Headline ── */}
           <h1
-            className="animate-fade-up text-[clamp(2.5rem,7vw,4.5rem)] font-black leading-[1.05] tracking-tight text-white"
+            className="animate-fade-up text-[clamp(2.5rem,7vw,4.5rem)] font-black leading-[1.05] tracking-tight text-slate-950"
             style={{ animationDelay: "0.1s" }}
           >
-            <span className="landing-gradient bg-clip-text text-transparent bg-gradient-to-r from-[#a25cf6] to-[#62d6ff]">TipJar</span>
+            <span className="landing-gradient">wallet on Solana</span> with MPC
           </h1>
 
-          {/* ── Sub-headline ── */}
           <p
-            className="animate-fade-up mx-auto mt-6 max-w-[480px] text-lg leading-[1.7] text-[#97a1b1]"
+            className="animate-fade-up mx-auto mt-6 max-w-[480px] text-lg leading-[1.7] text-slate-600"
             style={{ animationDelay: "0.2s" }}
           >
-            Tip creators, manage your wallet, and stake SOL from one clean
-            dashboard.
+            This project is trimmed down to a wallet-first experience: MPC
+            wallet provisioning, balance visibility, and secure SOL transfers on
+            devnet.
           </p>
 
-          {/* ── CTA row ── */}
           <div
             className="animate-fade-up mt-10 flex flex-col justify-center gap-4 sm:flex-row"
             style={{ animationDelay: "0.35s" }}
           >
             <Link
               href="/signin"
-              className="inline-flex h-[52px] min-w-[200px] items-center justify-center rounded-2xl px-8 text-base font-extrabold text-[#031014] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_-5px_rgba(162,92,246,0.4)]"
-              style={{
-                background: "var(--accent-gradient, linear-gradient(to right, #a25cf6, #62d6ff))",
-                boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.15), 0 20px 40px rgba(139,92,246,0.15)",
-              }}
+              className="btn btn-primary h-[52px] min-w-[200px] rounded-2xl px-8 text-base font-extrabold hover:scale-[1.02]"
             >
               Sign In
             </Link>
-            <Link
-              href="/dashboard"
-              className="inline-flex h-[52px] min-w-[200px] items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-8 text-base font-bold text-white transition-all duration-300 hover:bg-white/10 hover:border-[#a25cf6]/50 hover:shadow-[0_0_20px_-5px_rgba(162,92,246,0.2)]"
+            <button
+              type="button"
+              onClick={scrollToFeatures}
+              className="btn btn-outline h-[52px] min-w-[200px] rounded-2xl px-8 text-base font-bold"
             >
-              Explore
-            </Link>
+              Explore Wallet Flow
+              <ArrowRight size={16} className="ml-2" />
+            </button>
           </div>
 
-          {/* ── Feature cards ── */}
-          <div className="mt-16 grid grid-cols-1 gap-5 text-left sm:grid-cols-3">
-            {[
-              {
-                title: "Instant creator tipping",
-                detail: "Send support in seconds with a simple on-chain flow built for fans and creators.",
-                icon: Zap,
-                color: "#8b5cf6",
-                bgColor: "rgba(139,92,246,0.1)",
-              },
-              {
-                title: "Secure wallet access",
-                detail: "Manage balances and transfers through a protected MPC-backed wallet experience.",
-                icon: Wallet,
-                color: "#62d6ff",
-                bgColor: "rgba(98,214,255,0.1)",
-              },
-              {
-                title: "Solana staking support",
-                detail: "Stake SOL, track rewards, and manage unstaking from the same workspace.",
-                icon: TrendingUp,
-                color: "#4ade80",
-                bgColor: "rgba(74,222,128,0.1)",
-              },
-            ].map((item, i) => {
+          <div
+            id="features"
+            className="mt-16 grid grid-cols-1 gap-5 text-left sm:grid-cols-3"
+          >
+            {features.map((item, i) => {
               const Icon = item.icon;
               return (
                 <div
                   key={item.title}
-                  className="group relative z-10 animate-fade-up rounded-[1.25rem] bg-black/40 p-6 backdrop-blur-xl border border-white/5 transition-all duration-300 hover:-translate-y-1 hover:bg-white/[0.03] hover:border-white/10 hover:shadow-xl"
+                  className="group relative z-10 animate-fade-up rounded-[1.25rem] border border-slate-200/80 bg-white/78 p-6 shadow-[0_18px_40px_rgba(148,163,184,0.12)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:bg-white hover:shadow-xl"
                   style={{
                     animationDelay: `${0.45 + i * 0.08}s`,
-                    borderLeft: `2px solid ${item.color}`,
+                    borderLeft: `3px solid ${item.color}`,
                   }}
                 >
                   <div
@@ -117,10 +115,10 @@ export default function LandingPage() {
                   >
                     <Icon size={20} style={{ color: item.color }} />
                   </div>
-                  <p className="text-sm font-bold text-white/95">
+                  <p className="text-sm font-bold text-slate-900">
                     {item.title}
                   </p>
-                  <p className="mt-2 text-[13px] leading-relaxed text-[#97a1b1]">
+                  <p className="mt-2 text-[13px] leading-relaxed text-slate-600">
                     {item.detail}
                   </p>
                 </div>

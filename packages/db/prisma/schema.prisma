@@ -25,42 +25,14 @@ model User {
   displayName  String?
   bio          String?
   avatarUrl    String?
-  tipsGiven    Tip[]          @relation("TipFrom")
-  tipsReceived Tip[]          @relation("TipTo")
-  splits       RevenueSplit[]
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 }
 
+// Legacy enum values are retained so older records can still be read safely
+// while the app is trimmed down to wallet-only flows.
 enum Role {
   ADMIN
   CREATOR
   FAN
-}
-
-model Tip {
-  id            String   @id @default(uuid())
-  amount        Float
-  message       String?
-  signature     String?
-  fromUserId    String
-  toCreatorId   String
-  fromUser      User     @relation("TipFrom", fields: [fromUserId], references: [id])
-  toCreator     User     @relation("TipTo", fields: [toCreatorId], references: [id])
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@index([fromUserId])
-  @@index([toCreatorId])
-  @@index([createdAt])
-}
-
-model RevenueSplit {
-  id                   String @id @default(uuid())
-  creatorId            String
-  collaboratorAddress  String
-  label                String
-  percentage           Float
-  creator              User   @relation(fields: [creatorId], references: [id])
-  @@unique([creatorId, collaboratorAddress])
 }

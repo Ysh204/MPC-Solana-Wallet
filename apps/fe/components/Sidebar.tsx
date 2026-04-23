@@ -4,20 +4,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  Bell,
   ChevronLeft,
   ChevronRight,
-  Home,
   LayoutDashboard,
-  LifeBuoy,
   LogOut,
   Settings,
+  ShieldCheck,
   User,
   Wallet,
-  Zap,
 } from "lucide-react";
 
-import { getProfile, getTips, UserProfile } from "../lib/api";
+import { getProfile, UserProfile } from "../lib/api";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -33,20 +30,15 @@ export default function Sidebar({
   setIsCollapsed,
 }: SidebarProps) {
   const pathname = usePathname();
-  const [role, setRole] = useState<string | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [tipCount, setTipCount] = useState<number>(0);
 
   useEffect(() => {
-    const storedRole = localStorage.getItem("role");
     const storedEmail = localStorage.getItem("email");
-
-    setRole(storedRole);
 
     if (storedEmail) {
       setProfile({
         email: storedEmail,
-        displayName: storedRole === "CREATOR" ? "Creator" : "Member",
+        displayName: storedEmail.split("@")[0],
       } as UserProfile);
     }
 
@@ -56,48 +48,32 @@ export default function Sidebar({
     getProfile(token)
       .then((res) => setProfile(res.user))
       .catch((err) => console.error("Failed to fetch profile", err));
-
-    getTips(token)
-      .then((res) => setTipCount(res.received.length))
-      .catch((err) => console.error("Failed to fetch tips", err));
   }, []);
 
-  const topLink =
-    role === "CREATOR"
-      ? { name: "My Stats", href: "/dashboard", icon: LayoutDashboard }
-      : { name: "Discover", href: "/dashboard", icon: Home };
-
-  const navItems: { name: string; href: string; icon: any; badge?: number | null }[] = [
-    topLink,
-    { name: "My Tips", href: "/tips", icon: Bell, badge: tipCount > 0 ? tipCount : null },
+  const navItems = [
+    { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
     { name: "Wallet", href: "/wallet", icon: Wallet },
-    { name: "Stake", href: "/stake", icon: Zap },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
-
-  const roleLabel = role === "CREATOR" ? "Creator" : "Member";
-  const roleBadgeStyle =
-    role === "CREATOR"
-      ? "bg-[rgba(139,92,246,0.15)] text-[#b58cff]"
-      : "bg-[rgba(98,214,255,0.1)] text-[#62d6ff]";
+  const walletReady = Boolean(profile?.publicKey);
 
   return (
     <aside
-      className={`fixed left-0 top-0 bottom-0 z-50 m-5 flex flex-col rounded-[2rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.003))] p-4 shadow-[0_30px_90px_rgba(0,0,0,0.34)] backdrop-blur-3xl transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+      className={`fixed bottom-0 left-0 top-0 z-50 m-5 flex flex-col rounded-[2rem] border border-slate-200/90 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,250,252,0.78))] p-4 shadow-[0_30px_90px_rgba(148,163,184,0.22)] backdrop-blur-3xl transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] print:static print:m-0 print:mb-6 print:w-full print:max-w-none print:translate-x-0 ${
         isCollapsed ? "w-[74px]" : "w-[316px]"
       } ${isOpen ? "translate-x-0" : "-translate-x-[110%] lg:translate-x-0"}`}
     >
       {!isCollapsed && (
-        <div className="absolute inset-y-6 right-0 hidden w-px bg-white/[0.04] pointer-events-none lg:block" />
+        <div className="pointer-events-none absolute inset-y-6 right-0 hidden w-px bg-slate-200 lg:block" />
       )}
-      
-      {/* ── Background Grid ── */}
-      <div className="pointer-events-none absolute inset-0 rounded-[2rem] overflow-hidden opacity-[0.03] [background-image:linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] [background-size:40px_40px]" />
 
-      {/* ── Logo Section ── */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2rem] opacity-[0.03] print:hidden [background-image:linear-gradient(to_right,rgba(15,23,42,0.18)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.18)_1px,transparent_1px)] [background-size:40px_40px]" />
+
       <div
         className={`relative z-10 mb-6 flex min-h-[72px] items-center transition-all duration-300 ${
-          isCollapsed ? "flex-col justify-center gap-3 px-0" : "justify-between px-3"
+          isCollapsed
+            ? "flex-col justify-center gap-3 px-0"
+            : "justify-between px-3"
         }`}
       >
         {!isCollapsed && (
@@ -105,26 +81,28 @@ export default function Sidebar({
             <div
               className="flex h-11 w-11 items-center justify-center rounded-2xl"
               style={{
-                background: "linear-gradient(135deg, rgba(139,92,246,0.18), rgba(98,214,255,0.08))",
-                border: "1px solid rgba(139,92,246,0.2)",
+                background:
+                  "linear-gradient(135deg, rgba(37,99,235,0.12), rgba(15,118,110,0.08))",
+                border: "1px solid rgba(37,99,235,0.18)",
                 boxShadow: "var(--glow-purple)",
               }}
             >
               <img
                 src="/logo.png"
-                alt="TipJar Logo"
+                alt="MPC Wallet Logo"
                 className="h-7 w-7 object-contain"
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).style.display = "none";
                   (e.currentTarget.parentElement as HTMLElement).innerHTML =
-                    '<span style="font-size:18px;font-weight:900;color:#b58cff">T</span>';
+                    '<span style="font-size:18px;font-weight:900;color:#1d4ed8">M</span>';
                 }}
               />
             </div>
             <div>
-              <span className="text-[1.1rem] font-extrabold tracking-tight text-white">
-                TipJar
+              <span className="text-[1.1rem] font-extrabold tracking-tight text-slate-950">
+                MPC Wallet
               </span>
+              <p className="text-[11px] text-slate-500">Threshold signer</p>
             </div>
           </Link>
         )}
@@ -133,34 +111,33 @@ export default function Sidebar({
           <div
             className="flex h-11 w-11 items-center justify-center rounded-2xl"
             style={{
-              background: "linear-gradient(135deg, rgba(139,92,246,0.18), rgba(98,214,255,0.08))",
-              border: "1px solid rgba(139,92,246,0.2)",
+              background:
+                "linear-gradient(135deg, rgba(37,99,235,0.12), rgba(15,118,110,0.08))",
+              border: "1px solid rgba(37,99,235,0.18)",
               boxShadow: "var(--glow-purple)",
             }}
           >
             <img
               src="/logo.png"
-              alt="TipJar Logo"
+              alt="MPC Wallet Logo"
               className="h-7 w-7 object-contain"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).style.display = "none";
                 (e.currentTarget.parentElement as HTMLElement).innerHTML =
-                  '<span style="font-size:18px;font-weight:900;color:#b58cff">T</span>';
+                  '<span style="font-size:18px;font-weight:900;color:#1d4ed8">M</span>';
               }}
             />
           </div>
         )}
 
-        {/* ── Collapse Toggle ── */}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="rounded-2xl border border-white/[0.06] bg-white/[0.05] p-2 text-white/70 transition hover:bg-[rgba(139,92,246,0.12)] hover:text-[#b58cff]"
+          className="rounded-2xl border border-slate-200 bg-white/80 p-2 text-slate-500 transition hover:border-slate-900 hover:bg-slate-900 hover:text-white print:hidden"
         >
           {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </button>
       </div>
 
-      {/* ── Nav Items (Menu description box REMOVED) ── */}
       <nav className="relative z-10 flex flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden px-1 scrollbar-hide">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
@@ -175,15 +152,19 @@ export default function Sidebar({
                 isCollapsed ? "justify-center px-0 py-3.5" : "gap-3 px-4 py-4"
               } ${
                 isActive
-                  ? "sidebar-link-active text-white"
-                  : "text-white/42 hover:bg-white/[0.05] hover:text-white"
+                  ? "sidebar-link-active text-slate-900"
+                  : "text-slate-500 hover:bg-white hover:text-slate-900"
               }`}
             >
               <span
                 className={`flex items-center justify-center rounded-xl transition ${
-                  isActive ? "text-[#b58cff]" : "group-hover:text-white"
+                  isActive ? "text-[#2563eb]" : "group-hover:text-slate-900"
                 }`}
-                style={isActive ? { textShadow: "0 0 12px rgba(181,140,255,0.4)" } : {}}
+                style={
+                  isActive
+                    ? { textShadow: "0 0 12px rgba(37,99,235,0.12)" }
+                    : {}
+                }
               >
                 <Icon size={19} strokeWidth={isActive ? 2.5 : 2.1} />
               </span>
@@ -194,25 +175,11 @@ export default function Sidebar({
                 </span>
               )}
 
-              {!isCollapsed && item.badge ? (
-                <span
-                  className="rounded-full px-2 py-1 text-[13px] font-bold text-[#b58cff]"
-                  style={{
-                    background: "rgba(139,92,246,0.2)",
-                    border: "1px solid rgba(181,140,255,0.25)",
-                  }}
-                >
-                  {item.badge}
-                </span>
-              ) : null}
-
               {isCollapsed ? (
                 <div
-                  className="pointer-events-none absolute left-full ml-4 whitespace-nowrap rounded-xl px-3 py-2 text-xs text-white opacity-0 shadow-2xl transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+                  className="pointer-events-none absolute left-full ml-4 whitespace-nowrap rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 opacity-0 shadow-2xl transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
                   style={{
-                    background: "#0b171d",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+                    boxShadow: "0 8px 24px rgba(148,163,184,0.2)",
                     backdropFilter: "blur(16px)",
                   }}
                 >
@@ -223,26 +190,31 @@ export default function Sidebar({
           );
         })}
 
-        {/* ── Support Desk ── */}
         <div className={`mt-6 ${isCollapsed ? "px-0" : "px-2"}`}>
           <div
             className={`rounded-[var(--radius-md)] transition-all duration-300 ${
               isCollapsed ? "p-2" : "p-4"
             }`}
             style={{
-              background: "rgba(255,255,255,0.02)",
-              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.02)",
-              border: "1px dashed rgba(98,214,255,0.1)",
+              background: "rgba(37,99,235,0.04)",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.7)",
+              border: "1px dashed rgba(37,99,235,0.16)",
             }}
           >
-            <div className={`flex items-center ${isCollapsed ? "justify-center" : "gap-3"}`}>
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#1a1430] text-[#62d6ff]">
-                <LifeBuoy size={18} />
+            <div
+              className={`flex items-center ${isCollapsed ? "justify-center" : "gap-3"}`}
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+                <ShieldCheck size={18} />
               </div>
               {!isCollapsed && (
                 <div>
-                  <p className="text-sm font-bold text-white">Support Desk</p>
-                  <p className="text-xs text-[#7e959d]">Reporting and feedback</p>
+                  <p className="text-sm font-bold text-slate-900">MPC Status</p>
+                  <p className="text-xs text-slate-500">
+                    {walletReady
+                      ? "Wallet provisioned"
+                      : "Waiting for wallet setup"}
+                  </p>
                 </div>
               )}
             </div>
@@ -250,19 +222,20 @@ export default function Sidebar({
         </div>
       </nav>
 
-      {/* ── Profile Section ── */}
       <div className={`relative z-10 mt-4 ${isCollapsed ? "px-1" : "px-2"}`}>
         <div
-          className={`rounded-[1.5rem] bg-white/[0.024] transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] ${
+          className={`rounded-[1.5rem] border border-slate-200/80 bg-white/70 transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] ${
             isCollapsed ? "p-2" : "p-3"
           }`}
         >
-          <div className={`flex items-center ${isCollapsed ? "justify-center" : "gap-3"}`}>
+          <div
+            className={`flex items-center ${isCollapsed ? "justify-center" : "gap-3"}`}
+          >
             <div
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
               style={{
-                background: "#0f1822",
-                border: `1px solid ${role === "CREATOR" ? "rgba(139,92,246,0.25)" : "rgba(98,214,255,0.2)"}`,
+                background: "#f8fafc",
+                border: "1px solid rgba(148,163,184,0.26)",
               }}
             >
               {profile?.avatarUrl ? (
@@ -272,7 +245,7 @@ export default function Sidebar({
                   className="h-full w-full rounded-2xl object-cover"
                 />
               ) : (
-                <User className="text-white/65" size={19} />
+                <User className="text-slate-500" size={19} />
               )}
             </div>
 
@@ -280,17 +253,21 @@ export default function Sidebar({
               <>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="truncate text-sm font-bold text-white">
-                      {profile?.displayName || (role === "CREATOR" ? "Creator Account" : "User Account")}
+                    <p className="truncate text-sm font-bold text-slate-900">
+                      {profile?.displayName || "Wallet User"}
                     </p>
                     <span
-                      className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase ${roleBadgeStyle}`}
+                      className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase ${
+                        walletReady
+                          ? "bg-emerald-50 text-emerald-700"
+                          : "bg-blue-50 text-blue-700"
+                      }`}
                       style={{ letterSpacing: "0.08em" }}
                     >
-                      {roleLabel}
+                      {walletReady ? "Ready" : "Pending"}
                     </span>
                   </div>
-                  <p className="truncate text-[11px] text-[#6e868e]">
+                  <p className="truncate text-[11px] text-slate-500">
                     {profile?.email || "Member profile"}
                   </p>
                 </div>
@@ -300,17 +277,14 @@ export default function Sidebar({
                     onClick={() => {
                       localStorage.removeItem("token");
                       localStorage.removeItem("email");
-                      localStorage.removeItem("role");
                       localStorage.removeItem("userId");
                       window.location.href = "/signin";
                     }}
-                    className="rounded-xl p-2 text-white/35 transition hover:bg-red-400/12 hover:text-red-400"
+                    className="rounded-xl p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600"
                   >
                     <LogOut size={17} />
                   </button>
-                  <div className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-[#0b171d] px-2.5 py-1.5 text-[10px] font-bold text-white opacity-0 shadow-xl transition-opacity group-hover:opacity-100"
-                    style={{ border: "1px solid rgba(255,255,255,0.08)" }}
-                  >
+                  <div className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[10px] font-bold text-slate-900 opacity-0 shadow-xl transition-opacity group-hover:opacity-100">
                     Sign out
                   </div>
                 </div>
@@ -323,11 +297,10 @@ export default function Sidebar({
               onClick={() => {
                 localStorage.removeItem("token");
                 localStorage.removeItem("email");
-                localStorage.removeItem("role");
                 localStorage.removeItem("userId");
                 window.location.href = "/signin";
               }}
-              className="mt-2 flex w-full items-center justify-center rounded-xl bg-red-400/6 p-2 text-red-400 transition hover:bg-red-400/10"
+              className="mt-2 flex w-full items-center justify-center rounded-xl bg-rose-50 p-2 text-rose-600 transition hover:bg-rose-100"
             >
               <LogOut size={16} />
             </button>

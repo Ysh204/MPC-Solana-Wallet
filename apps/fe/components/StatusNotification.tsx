@@ -7,7 +7,10 @@ interface StatusNotificationProps {
   message: string;
 }
 
-export default function StatusNotification({ kind, message }: StatusNotificationProps) {
+export default function StatusNotification({
+  kind,
+  message,
+}: StatusNotificationProps) {
   if (!message) return null;
 
   const icon =
@@ -16,7 +19,7 @@ export default function StatusNotification({ kind, message }: StatusNotification
     ) : kind === "error" ? (
       <XCircle size={18} className="shrink-0 text-[#fb7185]" />
     ) : kind === "loading" ? (
-      <Loader2 size={18} className="shrink-0 animate-spin text-[#b58cff]" />
+      <Loader2 size={18} className="shrink-0 animate-spin text-[#2563eb]" />
     ) : null;
 
   return (
