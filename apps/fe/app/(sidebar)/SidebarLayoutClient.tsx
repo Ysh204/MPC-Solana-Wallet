@@ -14,7 +14,7 @@ export default function SidebarLayoutClient({
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <div className="relative flex min-h-screen bg-transparent">
+    <div className="relative flex min-h-screen bg-transparent print:block">
       <Sidebar
         isOpen={isOpen}
         setIsOpen={setIsOpen}
@@ -25,25 +25,25 @@ export default function SidebarLayoutClient({
       {/* ── Mobile hamburger trigger ── */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed left-5 top-5 z-50 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/[0.08] bg-[rgba(9,9,12,0.9)] backdrop-blur-xl text-white/70 transition hover:bg-[rgba(139,92,246,0.12)] hover:text-[#b58cff] lg:hidden"
+        className="fixed left-5 top-5 z-50 flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200/90 bg-white/90 text-slate-500 shadow-[0_18px_30px_rgba(148,163,184,0.18)] backdrop-blur-xl transition hover:bg-slate-900 hover:text-white lg:hidden print:hidden"
         aria-label="Open menu"
       >
         <Menu size={20} />
       </button>
 
       <main
-        className={`flex-1 min-h-screen px-4 py-5 transition-all duration-500 sm:px-6 sm:py-7 lg:px-8 lg:py-8 ${
+        className={`flex-1 min-h-screen px-4 py-5 transition-all duration-500 sm:px-6 sm:py-7 lg:px-8 lg:py-8 print:p-0 ${
           isCollapsed ? "lg:pl-[120px]" : "lg:pl-[364px]"
         }`}
       >
-        <div className="mx-auto min-h-[calc(100vh-2rem)] w-full max-w-[1620px] px-1 sm:px-2">
+        <div className="mx-auto min-h-[calc(100vh-2rem)] w-full max-w-[1620px] px-1 sm:px-2 print:min-h-0 print:px-0">
           {children}
         </div>
       </main>
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/65 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-white/70 backdrop-blur-sm lg:hidden print:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}

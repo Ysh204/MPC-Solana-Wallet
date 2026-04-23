@@ -75,15 +75,16 @@ function AccountInfo({
                 </p>
                 <span className="h-2 w-2 animate-pulse rounded-full bg-[#4ade80]" />
               </div>
-              <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-white">
+              <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950">
                 MPC Vault
               </h2>
-              <p className="mt-2 max-w-xl text-sm text-[#8da3ab]">
-                View the aggregated public key and live balance exposed by the MPC signing backend.
+              <p className="mt-2 max-w-xl text-sm text-slate-600">
+                View the aggregated public key and live balance exposed by the
+                MPC signing backend.
               </p>
             </div>
             <button
-              className={`flex h-11 w-11 items-center justify-center rounded-2xl border border-white/8 bg-white/[0.03] text-white/70 transition hover:border-[#b58cff]/20 hover:text-[#b58cff] ${
+              className={`flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 transition hover:border-slate-900 hover:text-slate-900 ${
                 loading ? "animate-spin" : ""
               }`}
               onClick={onRefresh}
@@ -94,10 +95,12 @@ function AccountInfo({
           </div>
 
           <div>
-            <div className="solana-address rounded-[var(--radius-sm)] border border-white/6 bg-[#071116] p-4 text-sm leading-7">
+            <div className="solana-address rounded-[var(--radius-sm)] border border-slate-200 bg-white/90 p-4 text-sm leading-7">
               {loading ? "Loading secure key..." : publicKey}
             </div>
-            <p className="mt-2 text-[10px] text-[#5f747c]">44 characters · Solana base58</p>
+            <p className="mt-2 text-[10px] text-slate-500">
+              44 characters · Solana base58
+            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -116,15 +119,15 @@ function AccountInfo({
             Available balance
           </p>
           <div className="mt-4 flex items-end gap-3">
-            <span className="text-[#b58cff]">◎</span>
+            <span className="text-[#2563eb]">◎</span>
             <span className="landing-gradient font-mono text-5xl font-extrabold tracking-tight">
               {loading ? "..." : balance.toFixed(4)}
             </span>
-            <span className="mb-1 text-sm font-bold text-[#b58cff]">SOL</span>
+            <span className="mb-1 text-sm font-bold text-slate-600">SOL</span>
           </div>
-          <p className="mt-3 text-sm text-[#8ba1a9]">
+          <p className="mt-3 text-sm text-slate-600">
             ≈ ${loading ? "..." : approxUsd.toFixed(2)}{" "}
-            <span className="text-xs text-[#5f747c]">· estimated</span>
+            <span className="text-xs text-slate-500">· estimated</span>
           </p>
         </div>
 
@@ -134,10 +137,13 @@ function AccountInfo({
           </p>
           <div className="mt-4 flex items-center gap-3">
             <span className="h-3 w-3 rounded-full bg-[#4ade80] shadow-[0_0_18px_#4ade80]" />
-            <span className="text-lg font-extrabold text-white">Connected</span>
+            <span className="text-lg font-extrabold text-slate-950">
+              Connected
+            </span>
           </div>
-          <p className="mt-3 text-sm text-[#8ba1a9]">
-            This wallet can request MPC signatures and broadcast standard SOL transfers on devnet.
+          <p className="mt-3 text-sm text-slate-600">
+            This wallet can request MPC signatures and broadcast standard SOL
+            transfers on devnet.
           </p>
         </div>
       </div>
@@ -163,8 +169,14 @@ function SendForm({
     if (!token) return;
 
     try {
-      const { signature } = await sendSol(token, { to, amount: parseFloat(amount) });
-      onStatus("success", `Transaction confirmed: ${signature.slice(0, 14)}...`);
+      const { signature } = await sendSol(token, {
+        to,
+        amount: parseFloat(amount),
+      });
+      onStatus(
+        "success",
+        `Transaction confirmed: ${signature.slice(0, 14)}...`,
+      );
       setTo("");
       setAmount("");
     } catch (err: any) {
@@ -176,16 +188,19 @@ function SendForm({
   }
 
   return (
-    <div className="dashboard-panel flex flex-col relative text-left h-full" id="send-sol">
+    <div
+      className="dashboard-panel flex flex-col relative text-left h-full"
+      id="send-sol"
+    >
       <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[#8b5cf6]/14 bg-[#8b5cf6]/10 text-[#b58cff]">
+        <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-blue-200 bg-blue-50 text-blue-700">
           <Send size={18} />
         </div>
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
             Secure transfer
           </p>
-          <h2 className="text-xl font-extrabold text-white">Send SOL</h2>
+          <h2 className="text-xl font-extrabold text-slate-950">Send SOL</h2>
         </div>
       </div>
 
@@ -207,7 +222,7 @@ function SendForm({
           <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
             Amount
           </label>
-          <div className="relative rounded-[var(--radius-sm)] border border-white/8 bg-[#071116] p-1">
+          <div className="relative rounded-[var(--radius-sm)] border border-slate-200 bg-white/90 p-1">
             <input
               className="dashboard-input border-0 bg-transparent pr-16 text-2xl"
               type="number"
@@ -218,7 +233,7 @@ function SendForm({
               onChange={(e) => setAmount(e.target.value)}
               required
             />
-            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 font-mono text-sm text-[#5f747c]">
+            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 font-mono text-sm text-slate-500">
               SOL
             </span>
           </div>
@@ -228,12 +243,17 @@ function SendForm({
           <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
             Execution notes
           </p>
-          <p className="mt-2 text-sm leading-6 text-[#8ca1a8]">
-            The API coordinates nonce exchange, collects partial signatures, and broadcasts the final transaction.
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            The API coordinates nonce exchange, collects partial signatures, and
+            broadcasts the final transaction.
           </p>
         </div>
 
-        <button disabled={sending} className="btn btn-primary mt-2 w-full" type="submit">
+        <button
+          disabled={sending}
+          className="btn btn-primary mt-2 w-full"
+          type="submit"
+        >
           <Send size={16} />
           {sending ? "Processing..." : "Execute transfer"}
         </button>
@@ -258,17 +278,22 @@ function TransactionList({
   }, [transactions, filter]);
 
   return (
-    <div className="dashboard-panel flex flex-col relative text-left h-full" id="history">
+    <div
+      className="dashboard-panel flex flex-col relative text-left h-full"
+      id="history"
+    >
       <div className="mb-6 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/8 bg-white/[0.03] text-white/75">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600">
             <WalletCards size={18} />
           </div>
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
               Latest batches
             </p>
-            <h2 className="text-xl font-extrabold text-white">Transaction history</h2>
+            <h2 className="text-xl font-extrabold text-slate-950">
+              Transaction history
+            </h2>
           </div>
         </div>
         <div className="dashboard-chip">Devnet</div>
@@ -283,18 +308,18 @@ function TransactionList({
             className={`rounded-full px-3 py-1.5 text-[11px] font-bold capitalize transition ${
               filter === f
                 ? "dashboard-chip-strong"
-                : "text-[#81979f] hover:text-white"
+                : "text-slate-500 hover:text-slate-900"
             }`}
             style={
               filter === f
                 ? {
-                    background: "rgba(139,92,246,0.055)",
-                    border: "1px solid rgba(139,92,246,0.12)",
+                    background: "rgba(37,99,235,0.08)",
+                    border: "1px solid rgba(37,99,235,0.18)",
                     color: "var(--accent)",
                   }
                 : {
-                    background: "rgba(255,255,255,0.02)",
-                    border: "1px solid rgba(255,255,255,0.04)",
+                    background: "rgba(255,255,255,0.8)",
+                    border: "1px solid rgba(148,163,184,0.22)",
                   }
             }
           >
@@ -306,11 +331,14 @@ function TransactionList({
       {loading ? (
         <div className="flex flex-col gap-3">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="wallet-skeleton h-16 w-full rounded-[var(--radius-sm)]" />
+            <div
+              key={i}
+              className="wallet-skeleton h-16 w-full rounded-[var(--radius-sm)]"
+            />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-[var(--radius)] border border-dashed border-white/10 py-14 text-center text-sm text-[#8ba1a9]">
+        <div className="rounded-[var(--radius)] border border-dashed border-slate-300 py-14 text-center text-sm text-slate-600">
           No wallet activity found yet.
         </div>
       ) : (
@@ -324,8 +352,10 @@ function TransactionList({
               className="tip-row group"
             >
               <div className="min-w-0">
-                <p className="solana-address text-sm">{shortAddr(tx.signature)}</p>
-                <p className="mt-1 text-[11px] text-[#5f747c]">
+                <p className="solana-address text-sm">
+                  {shortAddr(tx.signature)}
+                </p>
+                <p className="mt-1 text-[11px] text-slate-500">
                   {fmtTime(tx.blockTime)}
                 </p>
               </div>
@@ -342,7 +372,7 @@ function TransactionList({
                 </span>
                 <ExternalLink
                   size={14}
-                  className="text-white/50 transition group-hover:text-[#b58cff]"
+                  className="text-slate-400 transition group-hover:text-[#2563eb]"
                 />
               </div>
             </a>
@@ -385,23 +415,24 @@ export default function WalletPage() {
   return (
     <RequireAuth>
       <div className="mx-auto w-full max-w-[1500px]" id="wallet-dashboard">
-        <section className="relative isolate overflow-hidden rounded-[2.5rem] bg-black/20 backdrop-blur-xl p-8 md:p-12 shadow-[0_0_80px_rgba(0,0,0,0.5)] border border-white/[0.04]">
-          {/* ── Background Grid ── */}
-          <div className="pointer-events-none absolute inset-0 opacity-[0.03] [background-image:linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] [background-size:40px_40px]" />
+        <section className="relative isolate overflow-hidden rounded-[2.5rem] border border-slate-200/80 bg-white/78 p-8 shadow-[0_24px_70px_rgba(148,163,184,0.18)] backdrop-blur-xl md:p-12">
+          <div className="pointer-events-none absolute inset-0 opacity-[0.03] print:hidden [background-image:linear-gradient(to_right,rgba(15,23,42,0.18)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.18)_1px,transparent_1px)] [background-size:40px_40px]" />
 
-          {/* ── Ambient Radial Glows ── */}
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(162,92,246,0.08),transparent_70%),radial-gradient(ellipse_at_bottom_left,rgba(0,210,255,0.06),transparent_60%)]" />
+          <div className="pointer-events-none absolute inset-0 print:hidden bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.09),transparent_70%),radial-gradient(ellipse_at_bottom_left,rgba(20,184,166,0.07),transparent_60%)]" />
 
           <div className="relative z-10 w-full">
             <header className="mb-8">
               <div>
-                <div className="dashboard-chip dashboard-chip-strong mb-4">Vault operations</div>
-                <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl">
+                <div className="dashboard-chip dashboard-chip-strong mb-4">
+                  Vault operations
+                </div>
+                <h1 className="text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">
                   Solana <span className="landing-gradient">Wallet</span>
                 </h1>
-                <p className="mt-3 max-w-2xl text-base text-[#8aa1a9]">
-                  Powered by an MPC-backed signer set, this workspace focuses on balances,
-                  transfers, and transaction history without the older tipping or staking flows.
+                <p className="mt-3 max-w-2xl text-base text-slate-600">
+                  Powered by an MPC-backed signer set, this workspace focuses on
+                  balances, transfers, and transaction history without the older
+                  tipping or staking flows.
                 </p>
 
                 <div className="mt-6 flex flex-wrap gap-3">
@@ -409,8 +440,12 @@ export default function WalletPage() {
                     <span className="h-2 w-2 rounded-full bg-[#4ade80] shadow-[0_0_12px_#4ade80]" />
                     Solana Devnet
                   </div>
-                  <div className="dashboard-chip">{summary.total} tracked transactions</div>
-                  <div className="dashboard-chip">{summary.successful} successful</div>
+                  <div className="dashboard-chip">
+                    {summary.total} tracked transactions
+                  </div>
+                  <div className="dashboard-chip">
+                    {summary.successful} successful
+                  </div>
                 </div>
               </div>
             </header>
@@ -418,10 +453,14 @@ export default function WalletPage() {
             {loadingOrNotFound(walletLoading, notFound, refreshWallet)}
 
             {walletError && !notFound && (
-              <div className="status-bar status-error relative mb-6">{walletError}</div>
+              <div className="status-bar status-error relative mb-6">
+                {walletError}
+              </div>
             )}
             {txError && !txLoading && (
-              <div className="status-bar status-error relative mb-6">{txError}</div>
+              <div className="status-bar status-error relative mb-6">
+                {txError}
+              </div>
             )}
 
             {!notFound && !walletLoading && wallet && (
@@ -438,11 +477,16 @@ export default function WalletPage() {
 
                 <div className="grid grid-cols-1 gap-6 xl:grid-cols-[0.95fr_1.05fr]">
                   <ScrollReveal>
-                    <SendForm onStatus={(kind, msg) => setStatus({ kind, msg })} />
+                    <SendForm
+                      onStatus={(kind, msg) => setStatus({ kind, msg })}
+                    />
                   </ScrollReveal>
 
                   <ScrollReveal className="h-full">
-                    <TransactionList transactions={transactions} loading={txLoading} />
+                    <TransactionList
+                      transactions={transactions}
+                      loading={txLoading}
+                    />
                   </ScrollReveal>
                 </div>
               </div>
@@ -456,12 +500,16 @@ export default function WalletPage() {
   );
 }
 
-function loadingOrNotFound(loading: boolean, notFound: boolean, onRefresh: () => void) {
+function loadingOrNotFound(
+  loading: boolean,
+  notFound: boolean,
+  onRefresh: () => void,
+) {
   if (loading) {
     return (
       <div className="flex flex-col items-center gap-4 py-20">
-        <div className="h-12 w-12 animate-spin rounded-full border-2 border-[#8b5cf6]/40 border-t-[#b58cff]" />
-        <span className="text-xs font-bold uppercase tracking-[0.26em] text-[#b58cff]">
+        <div className="h-12 w-12 animate-spin rounded-full border-2 border-blue-200 border-t-blue-700" />
+        <span className="text-xs font-bold uppercase tracking-[0.26em] text-blue-700">
           Syncing vault data
         </span>
       </div>
@@ -471,14 +519,16 @@ function loadingOrNotFound(loading: boolean, notFound: boolean, onRefresh: () =>
   if (notFound) {
     return (
       <div className="flex flex-col relative dashboard-panel mx-auto mt-12 max-w-2xl items-center gap-6 py-16 text-center">
-        <div className="flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]">
-          <ShieldCheck size={30} className="text-white/45" />
+        <div className="flex h-20 w-20 items-center justify-center rounded-full border border-slate-200 bg-white">
+          <ShieldCheck size={30} className="text-slate-400" />
         </div>
         <div>
-          <h2 className="text-2xl font-extrabold text-white">Vault not initialized</h2>
-          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-[#8ba1a9]">
-            Your MPC wallet has not been provisioned yet. Contact an administrator and then refresh
-            to verify access.
+          <h2 className="text-2xl font-extrabold text-slate-950">
+            Vault not initialized
+          </h2>
+          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-slate-600">
+            Your MPC wallet has not been provisioned yet. Contact an
+            administrator and then refresh to verify access.
           </p>
         </div>
         <button className="btn btn-outline px-8" onClick={onRefresh}>

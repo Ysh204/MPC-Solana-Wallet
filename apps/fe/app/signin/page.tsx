@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { AlertCircle, AtSign, Lock, LockKeyhole, ShieldCheck } from "lucide-react";
+import {
+  AlertCircle,
+  AtSign,
+  Lock,
+  LockKeyhole,
+  ShieldCheck,
+} from "lucide-react";
 import { useState } from "react";
 
 import { signin } from "../../lib/api";
@@ -32,11 +38,11 @@ export default function SignInPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden p-6">
-      <div className="fixed inset-0 z-0 bg-[#050507]/80" />
       <div
-        className="fixed inset-0 z-0 pointer-events-none"
+        className="fixed inset-0 z-0 pointer-events-none print:hidden"
         style={{
-          background: 'radial-gradient(ellipse at 50% 30%, rgba(139,92,246,0.08) 0%, transparent 60%)',
+          background:
+            "radial-gradient(ellipse at 50% 30%, rgba(59,130,246,0.1) 0%, transparent 60%)",
         }}
       />
       <section className="dashboard-panel relative z-10 mx-auto w-full max-w-xl">
@@ -45,16 +51,26 @@ export default function SignInPage() {
             <div
               className="animate-pulse-glow-staking relative mx-auto flex h-20 w-20 items-center justify-center rounded-[var(--radius)]"
               style={{
-                background: "linear-gradient(135deg, rgba(139,92,246,0.2), rgba(98,214,255,0.1))",
-                border: "1px solid rgba(139,92,246,0.25)",
-                boxShadow: "0 0 40px rgba(139,92,246,0.2), 0 0 0 8px rgba(139,92,246,0.06)",
+                background:
+                  "linear-gradient(135deg, rgba(37,99,235,0.12), rgba(15,118,110,0.08))",
+                border: "1px solid rgba(37,99,235,0.18)",
+                boxShadow:
+                  "0 0 30px rgba(37,99,235,0.1), 0 0 0 8px rgba(37,99,235,0.04)",
               }}
             >
-              <img src="/logo.png" alt="MPC Wallet Logo" className="h-12 w-12 object-contain" />
+              <img
+                src="/logo.png"
+                alt="MPC Wallet Logo"
+                className="h-12 w-12 object-contain"
+              />
             </div>
           </Link>
-          <h1 className="mt-6 text-3xl font-black tracking-tight text-white">Sign in</h1>
-          <p className="mt-2 text-[#9aa3b2]">Access your MPC-protected Solana wallet.</p>
+          <h1 className="mt-6 text-3xl font-black tracking-tight text-slate-950">
+            Sign in
+          </h1>
+          <p className="mt-2 text-slate-600">
+            Access your MPC-protected Solana wallet.
+          </p>
         </div>
 
         <form onSubmit={handleSignIn} className="flex flex-col gap-5">
@@ -65,7 +81,7 @@ export default function SignInPage() {
             <div className="relative">
               <AtSign
                 size={16}
-                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#5f747c]"
+                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
               />
               <input
                 className="dashboard-input !pl-11"
@@ -78,7 +94,7 @@ export default function SignInPage() {
             </div>
           </div>
 
-          <div className="h-px w-full" style={{ background: "rgba(255,255,255,0.04)" }} />
+          <div className="h-px w-full bg-slate-200/80" />
 
           <div>
             <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
@@ -87,7 +103,7 @@ export default function SignInPage() {
             <div className="relative">
               <Lock
                 size={16}
-                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#5f747c]"
+                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
               />
               <input
                 className="dashboard-input !pl-11"
@@ -101,13 +117,17 @@ export default function SignInPage() {
           </div>
 
           {error ? (
-            <div className="flex items-start gap-2 rounded-[var(--radius-sm)] border border-red-400/18 bg-red-400/10 px-4 py-3 text-sm font-semibold text-red-400">
+            <div className="flex items-start gap-2 rounded-[var(--radius-sm)] border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
               <AlertCircle size={15} className="mt-0.5 shrink-0" />
               <span>{error}</span>
             </div>
           ) : null}
 
-          <button disabled={loading} className="btn btn-primary mt-2 w-full" type="submit">
+          <button
+            disabled={loading}
+            className="btn btn-primary mt-2 w-full"
+            type="submit"
+          >
             <LockKeyhole size={16} />
             {loading ? "Authenticating..." : "Sign in"}
           </button>
@@ -117,12 +137,12 @@ export default function SignInPage() {
           <div
             className="inline-flex items-center gap-2 rounded-full px-4 py-2"
             style={{
-              background: "rgba(98,214,255,0.04)",
-              border: "1px solid rgba(98,214,255,0.1)",
+              background: "rgba(37,99,235,0.06)",
+              border: "1px solid rgba(37,99,235,0.12)",
             }}
           >
-            <ShieldCheck size={14} className="text-[#62d6ff]" />
-            <span className="text-[0.7rem] font-bold uppercase tracking-[0.26em] text-[#7db8c0]">
+            <ShieldCheck size={14} className="text-[#2563eb]" />
+            <span className="text-[0.7rem] font-bold uppercase tracking-[0.26em] text-slate-600">
               Protected by multi-party computation
             </span>
           </div>

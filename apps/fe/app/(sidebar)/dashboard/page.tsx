@@ -92,9 +92,9 @@ export default function DashboardPage() {
   return (
     <RequireAuth>
       <div className="mx-auto w-full max-w-[1500px]" id="wallet-overview">
-        <section className="relative isolate overflow-hidden rounded-[2.5rem] border border-white/[0.04] bg-black/20 p-8 shadow-[0_0_80px_rgba(0,0,0,0.5)] backdrop-blur-xl md:p-12">
-          <div className="pointer-events-none absolute inset-0 opacity-[0.03] [background-image:linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] [background-size:40px_40px]" />
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(162,92,246,0.08),transparent_70%),radial-gradient(ellipse_at_bottom_left,rgba(0,210,255,0.06),transparent_60%)]" />
+        <section className="relative isolate overflow-hidden rounded-[2.5rem] border border-slate-200/80 bg-white/78 p-8 shadow-[0_24px_70px_rgba(148,163,184,0.18)] backdrop-blur-xl md:p-12">
+          <div className="pointer-events-none absolute inset-0 opacity-[0.03] print:hidden [background-image:linear-gradient(to_right,rgba(15,23,42,0.18)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.18)_1px,transparent_1px)] [background-size:40px_40px]" />
+          <div className="pointer-events-none absolute inset-0 print:hidden bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.09),transparent_70%),radial-gradient(ellipse_at_bottom_left,rgba(20,184,166,0.07),transparent_60%)]" />
 
           <div className="relative z-10 w-full">
             <header className="mb-8 flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
@@ -103,10 +103,10 @@ export default function DashboardPage() {
                   <ShieldCheck size={14} />
                   Wallet command center
                 </div>
-                <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl">
+                <h1 className="text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">
                   MPC wallet <span className="landing-gradient">overview</span>
                 </h1>
-                <p className="mt-3 max-w-2xl text-base text-[#8aa1a9]">
+                <p className="mt-3 max-w-2xl text-base text-slate-600">
                   This workspace is now focused on MPC-backed wallet operations:
                   account provisioning, balance checks, secure transfers, and
                   transaction visibility.
@@ -114,13 +114,16 @@ export default function DashboardPage() {
               </div>
 
               <button
-                className={`flex h-11 items-center gap-2 rounded-2xl border border-white/8 bg-white/[0.03] px-4 text-sm font-semibold text-white/75 transition hover:border-[#b58cff]/20 hover:text-[#b58cff] ${
+                className={`flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-white/80 px-4 text-sm font-semibold text-slate-600 transition hover:border-slate-900 hover:text-slate-900 ${
                   walletLoading || txLoading ? "opacity-70" : ""
                 }`}
                 onClick={handleRefresh}
                 disabled={walletLoading || txLoading}
               >
-                <RefreshCcw size={15} className={walletLoading || txLoading ? "animate-spin" : ""} />
+                <RefreshCcw
+                  size={15}
+                  className={walletLoading || txLoading ? "animate-spin" : ""}
+                />
                 Refresh
               </button>
             </header>
@@ -139,10 +142,12 @@ export default function DashboardPage() {
                       <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
                         Account
                       </p>
-                      <h2 className="mt-2 text-3xl font-extrabold text-white">
-                        {profile?.displayName || profile?.email || "Wallet user"}
+                      <h2 className="mt-2 text-3xl font-extrabold text-slate-950">
+                        {profile?.displayName ||
+                          profile?.email ||
+                          "Wallet user"}
                       </h2>
-                      <p className="mt-2 text-sm text-[#8ca1a8]">
+                      <p className="mt-2 text-sm text-slate-600">
                         {wallet?.publicKey
                           ? "Your public key was aggregated from MPC participants and is ready for transfers."
                           : "An administrator still needs to provision your MPC wallet."}
@@ -153,16 +158,20 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <div className="rounded-[var(--radius-sm)] border border-white/6 bg-[#071116] p-4">
+                  <div className="rounded-[var(--radius-sm)] border border-slate-200 bg-white/90 p-4">
                     <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
                       Public key
                     </p>
                     <div className="mt-3 flex flex-wrap items-center gap-3">
                       <code className="solana-address text-sm">
-                        {wallet?.publicKey || profile?.publicKey || "Wallet not initialized"}
+                        {wallet?.publicKey ||
+                          profile?.publicKey ||
+                          "Wallet not initialized"}
                       </code>
                       {(wallet?.publicKey || profile?.publicKey) && (
-                        <CopyButton text={wallet?.publicKey || profile?.publicKey || ""} />
+                        <CopyButton
+                          text={wallet?.publicKey || profile?.publicKey || ""}
+                        />
                       )}
                     </div>
                   </div>
@@ -172,16 +181,20 @@ export default function DashboardPage() {
                       <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
                         Balance
                       </p>
-                      <p className="mt-3 text-3xl font-extrabold text-white">
-                        {walletLoading ? "..." : wallet ? wallet.balance.toFixed(4) : "0.0000"}
-                        <span className="ml-2 text-sm text-[#62d6ff]">SOL</span>
+                      <p className="mt-3 text-3xl font-extrabold text-slate-950">
+                        {walletLoading
+                          ? "..."
+                          : wallet
+                            ? wallet.balance.toFixed(4)
+                            : "0.0000"}
+                        <span className="ml-2 text-sm text-slate-600">SOL</span>
                       </p>
                     </div>
                     <div className="dashboard-soft-panel rounded-[var(--radius-md)] p-4">
                       <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
                         Transactions
                       </p>
-                      <p className="mt-3 text-3xl font-extrabold text-white">
+                      <p className="mt-3 text-3xl font-extrabold text-slate-950">
                         {txLoading ? "..." : summary.total}
                       </p>
                     </div>
@@ -189,7 +202,7 @@ export default function DashboardPage() {
                       <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
                         Successful
                       </p>
-                      <p className="mt-3 text-3xl font-extrabold text-white">
+                      <p className="mt-3 text-3xl font-extrabold text-slate-950">
                         {txLoading ? "..." : summary.successful}
                       </p>
                     </div>
@@ -203,44 +216,56 @@ export default function DashboardPage() {
                     <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
                       Quick actions
                     </p>
-                    <h2 className="mt-2 text-2xl font-extrabold text-white">
+                    <h2 className="mt-2 text-2xl font-extrabold text-slate-950">
                       Open the wallet workspace
                     </h2>
-                    <p className="mt-3 text-sm leading-6 text-[#8ca1a8]">
-                      Jump into transfers, review the latest signatures, or update
-                      your profile metadata.
+                    <p className="mt-3 text-sm leading-6 text-slate-600">
+                      Jump into transfers, review the latest signatures, or
+                      update your profile metadata.
                     </p>
                   </div>
 
                   <div className="mt-6 grid gap-3">
                     <Link href="/wallet" className="tip-row group">
                       <div>
-                        <p className="text-sm font-bold text-white">Wallet operations</p>
-                        <p className="mt-1 text-sm text-[#8ca1a8]">
+                        <p className="text-sm font-bold text-slate-900">
+                          Wallet operations
+                        </p>
+                        <p className="mt-1 text-sm text-slate-600">
                           Send SOL and inspect recent on-chain history.
                         </p>
                       </div>
-                      <ArrowRight size={16} className="ml-auto text-[#b58cff] transition group-hover:translate-x-1" />
+                      <ArrowRight
+                        size={16}
+                        className="ml-auto text-[#2563eb] transition group-hover:translate-x-1"
+                      />
                     </Link>
 
                     <Link href="/settings" className="tip-row group">
                       <div>
-                        <p className="text-sm font-bold text-white">Profile settings</p>
-                        <p className="mt-1 text-sm text-[#8ca1a8]">
-                          Update the display name, avatar, and bio attached to your account.
+                        <p className="text-sm font-bold text-slate-900">
+                          Profile settings
+                        </p>
+                        <p className="mt-1 text-sm text-slate-600">
+                          Update the display name, avatar, and bio attached to
+                          your account.
                         </p>
                       </div>
-                      <ArrowRight size={16} className="ml-auto text-[#b58cff] transition group-hover:translate-x-1" />
+                      <ArrowRight
+                        size={16}
+                        className="ml-auto text-[#2563eb] transition group-hover:translate-x-1"
+                      />
                     </Link>
                   </div>
 
-                  <div className="mt-6 rounded-[var(--radius-sm)] border border-white/6 bg-[#071116] p-4">
+                  <div className="mt-6 rounded-[var(--radius-sm)] border border-slate-200 bg-white/90 p-4">
                     <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
                       Provisioning
                     </p>
-                    <p className="mt-2 text-sm text-[#8ca1a8]">
-                      If your wallet is missing, ask an admin to create the account
-                      through the backend provisioning flow and then refresh this page.
+                    <p className="mt-2 text-sm text-slate-600">
+                      If your wallet is missing, ask an admin to create the
+                      account through the backend provisioning flow and then
+                      refresh this page.
                     </p>
                   </div>
                 </div>
@@ -251,29 +276,34 @@ export default function DashboardPage() {
               <ScrollReveal>
                 <div className="dashboard-panel flex h-full flex-col text-left">
                   <div className="mb-5 flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/8 bg-white/[0.03] text-white/75">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600">
                       <WalletCards size={18} />
                     </div>
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
                         Recent activity
                       </p>
-                      <h2 className="text-xl font-extrabold text-white">Latest transactions</h2>
+                      <h2 className="text-xl font-extrabold text-slate-950">
+                        Latest transactions
+                      </h2>
                     </div>
                   </div>
 
                   {notFound ? (
-                    <div className="rounded-[var(--radius)] border border-dashed border-white/10 py-14 text-center text-sm text-[#8ba1a9]">
+                    <div className="rounded-[var(--radius)] border border-dashed border-slate-300 py-14 text-center text-sm text-slate-600">
                       Wallet provisioning is still pending.
                     </div>
                   ) : txLoading ? (
                     <div className="flex flex-col gap-3">
                       {[...Array(4)].map((_, index) => (
-                        <div key={index} className="wallet-skeleton h-16 w-full rounded-[var(--radius-sm)]" />
+                        <div
+                          key={index}
+                          className="wallet-skeleton h-16 w-full rounded-[var(--radius-sm)]"
+                        />
                       ))}
                     </div>
                   ) : transactions.length === 0 ? (
-                    <div className="rounded-[var(--radius)] border border-dashed border-white/10 py-14 text-center text-sm text-[#8ba1a9]">
+                    <div className="rounded-[var(--radius)] border border-dashed border-slate-300 py-14 text-center text-sm text-slate-600">
                       No transactions have been signed yet.
                     </div>
                   ) : (
@@ -287,8 +317,10 @@ export default function DashboardPage() {
                           className="tip-row group"
                         >
                           <div className="min-w-0">
-                            <p className="solana-address text-sm">{shortAddr(tx.signature)}</p>
-                            <p className="mt-1 text-[11px] text-[#5f747c]">
+                            <p className="solana-address text-sm">
+                              {shortAddr(tx.signature)}
+                            </p>
+                            <p className="mt-1 text-[11px] text-slate-500">
                               {fmtTime(tx.blockTime)}
                             </p>
                           </div>
@@ -304,7 +336,7 @@ export default function DashboardPage() {
                             </span>
                             <ExternalLink
                               size={14}
-                              className="text-white/50 transition group-hover:text-[#b58cff]"
+                              className="text-slate-400 transition group-hover:text-[#2563eb]"
                             />
                           </div>
                         </a>
@@ -319,7 +351,7 @@ export default function DashboardPage() {
                   <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
                     MPC flow
                   </p>
-                  <h2 className="mt-2 text-2xl font-extrabold text-white">
+                  <h2 className="mt-2 text-2xl font-extrabold text-slate-950">
                     How this wallet signs transfers
                   </h2>
                   <div className="mt-6 grid gap-4">
@@ -328,11 +360,16 @@ export default function DashboardPage() {
                       "The backend collects nonce commitments and partial signatures from the configured MPC participants.",
                       "The aggregated signature is broadcast to Solana and the wallet UI surfaces the resulting transaction history.",
                     ].map((step, index) => (
-                      <div key={step} className="dashboard-soft-panel rounded-[var(--radius-md)] p-4">
+                      <div
+                        key={step}
+                        className="dashboard-soft-panel rounded-[var(--radius-md)] p-4"
+                      >
                         <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-[#71868d]">
                           Step {index + 1}
                         </p>
-                        <p className="mt-2 text-sm leading-6 text-[#8ca1a8]">{step}</p>
+                        <p className="mt-2 text-sm leading-6 text-slate-600">
+                          {step}
+                        </p>
                       </div>
                     ))}
                   </div>
